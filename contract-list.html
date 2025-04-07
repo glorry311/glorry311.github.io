@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的合同 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="common.css" rel="stylesheet">
+  <style>
+    .contract-item {
+      background-color: white;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    
+    .contract-item-header {
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .contract-number {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .contract-item-body {
+      padding: 16px;
+    }
+    
+    .contract-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    
+    .contract-info:last-child {
+      margin-bottom: 0;
+    }
+    
+    .contract-label {
+      color: #8e8e93;
+      font-size: 14px;
+    }
+    
+    .contract-value {
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status-active {
+      background-color: #e3f9e5;
+      color: #1b873d;
+    }
+    
+    .status-completed {
+      background-color: #f2f2f7;
+      color: #8e8e93;
+    }
+
+    .status-terminated {
+      background-color: #fee2e2;
+      color: #dc2626;
+    }
+
+    /* 返回按钮样式 */
+    .back-btn {
+      position: fixed;
+      left: 16px;
+      top: 60px;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background-color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3182ce;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .page-header {
+      position: fixed;
+      top: 44px;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: white;
+      height: 44px;
+      padding-left: 60px;
+    }
+
+    /* 过滤条件样式 */
+    .filter-tabs {
+      position: fixed;
+      top: 88px;
+      left: 0;
+      right: 0;
+      display: flex;
+      background-color: white;
+      padding: 8px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      z-index: 50;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .filter-tab {
+      padding: 8px 16px;
+      margin-right: 8px;
+      font-size: 14px;
+      color: #64748b;
+      border-radius: 16px;
+      cursor: pointer;
+    }
+
+    .filter-tab.active {
+      background-color: #f1f5f9;
+      color: #3182ce;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS 状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time">9:41 AM</div>
+    <div class="page-title">我的合同</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 主内容 -->
+  <div class="container">
+    <!-- 合同列表 -->
+    <div class="contract-list">
+      <div class="contract-item">
+        <div class="contract-item-header">
+          <span class="contract-number">合同 #HT2023001</span>
+          <a href="contract-detail.html"><i class="fas fa-chevron-right text-gray-400"></i></a>
+        </div>
+        <div class="contract-item-body">
+          <div class="contract-info">
+            <span class="contract-label">签订时间</span>
+            <span class="contract-value">2023-01-15</span>
+          </div>
+          <div class="contract-info">
+            <span class="contract-label">合同状态</span>
+            <span class="status-badge status-active">履行中</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="contract-item">
+        <div class="contract-item-header">
+          <span class="contract-number">合同 #HT2023002</span>
+          <a href="contract-detail.html"><i class="fas fa-chevron-right text-gray-400"></i></a>
+        </div>
+        <div class="contract-item-body">
+          <div class="contract-info">
+            <span class="contract-label">签订时间</span>
+            <span class="contract-value">2023-03-20</span>
+          </div>
+          <div class="contract-info">
+            <span class="contract-label">合同状态</span>
+            <span class="status-badge status-active">履行中</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="contract-item">
+        <div class="contract-item-header">
+          <span class="contract-number">合同 #HT2022015</span>
+          <a href="contract-detail.html"><i class="fas fa-chevron-right text-gray-400"></i></a>
+        </div>
+        <div class="contract-item-body">
+          <div class="contract-info">
+            <span class="contract-label">签订时间</span>
+            <span class="contract-value">2022-10-05</span>
+          </div>
+          <div class="contract-info">
+            <span class="contract-label">合同状态</span>
+            <span class="status-badge status-completed">已完成</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="contract-item">
+        <div class="contract-item-header">
+          <span class="contract-number">合同 #HT2022009</span>
+          <a href="contract-detail.html"><i class="fas fa-chevron-right text-gray-400"></i></a>
+        </div>
+        <div class="contract-item-body">
+          <div class="contract-info">
+            <span class="contract-label">签订时间</span>
+            <span class="contract-value">2022-08-17</span>
+          </div>
+          <div class="contract-info">
+            <span class="contract-label">合同状态</span>
+            <span class="status-badge status-terminated">中止</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 过滤条件 -->
+    <div class="filter-tabs">
+      <div class="filter-tab active" data-status="all">全部</div>
+      <div class="filter-tab" data-status="active">履行中</div>
+      <div class="filter-tab" data-status="pending">待签署</div>
+      <div class="filter-tab" data-status="completed">已完成</div>
+      <div class="filter-tab" data-status="terminated">中止</div>
+    </div>
+  </div>
+  
+  <!-- 返回按钮 -->
+  <a href="profile.html" class="back-btn">
+    <i class="fas fa-arrow-left"></i>
+  </a>
+  
+  <!-- 底部导航栏 -->
+  <div class="tab-bar">
+    <a href="home.html" class="tab-item">
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+    <a href="ledger.html" class="tab-item">
+      <i class="fas fa-book"></i>
+      <span>台账</span>
+    </a>
+    <a href="transfer.html" class="tab-item">
+      <i class="fas fa-file-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="profile.html" class="tab-item active">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    // 处理过滤条件
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterTabs = document.querySelectorAll('.filter-tab');
+      const contractItems = document.querySelectorAll('.contract-item');
+      
+      // 为每个过滤标签添加点击事件
+      filterTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          // 移除所有标签的active类
+          filterTabs.forEach(t => t.classList.remove('active'));
+          
+          // 添加当前标签的active类
+          this.classList.add('active');
+          
+          // 获取过滤状态
+          const status = this.getAttribute('data-status');
+          
+          // 过滤合同列表
+          contractItems.forEach(item => {
+            const statusBadge = item.querySelector('.status-badge');
+            if (!statusBadge) return;
+            
+            if (status === 'all') {
+              item.style.display = '';
+            } else {
+              const itemStatus = statusBadge.classList.contains(`status-${status}`);
+              item.style.display = itemStatus ? '' : 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html> 

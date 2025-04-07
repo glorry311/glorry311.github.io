@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>联单申报 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .container {
+      padding: 20px 16px;
+      height: calc(100vh - 124px);
+      overflow-y: auto;
+    }
+    
+    .form-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #2d3748;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 8px;
+    }
+    
+    .form-control, .form-select {
+      width: 100%;
+      height: 48px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background-color: #f8fafc;
+      color: #2d3748;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+      background-color: #fff;
+    }
+    
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+    }
+    
+    .form-btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+    
+    .btn {
+      flex: 1;
+      height: 48px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #3182ce, #63b3ed);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    .required::after {
+      content: '*';
+      color: #e53e3e;
+      margin-left: 4px;
+    }
+    
+    .error-feedback {
+      display: none;
+      color: #e53e3e;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    
+    .invalid .form-control, .invalid .form-select {
+      border-color: #e53e3e;
+    }
+    
+    .invalid .error-feedback {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 页面头部 -->
+  <div class="page-header">
+    <div class="action-buttons left-buttons">
+      <button class="back-button" onclick="history.back()">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+    <div class="page-title">联单申报</div>
+    <div class="action-buttons">
+      <div class="share-dots">
+        <div class="share-dot"></div>
+        <div class="share-dot middle"></div>
+        <div class="share-dot"></div>
+      </div>
+      <div class="home-btn">
+        <div class="home-btn-inner"></div>
+        <div class="home-btn-outer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <form id="transfer-form">
+      <div class="form-group">
+        <label for="waste-type" class="form-label required">废物名称</label>
+        <select id="waste-type" class="form-select" required>
+          <option value="">请选择废物名称</option>
+          <option value="混合废水W1_W2">混合废水W1_W2</option>
+          <option value="脱脂废水">脱脂废水</option>
+          <option value="含氰废水">含氰废水</option>
+          <option value="酸洗废水">酸洗废水</option>
+          <option value="含铬废水">含铬废水</option>
+        </select>
+        <div class="error-feedback">请选择废物名称</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="waste-amount" class="form-label required">预估申报量(吨)</label>
+        <input type="number" id="waste-amount" class="form-control" min="0.1" step="0.1" required placeholder="请输入预估申报量">
+        <div class="error-feedback">请输入有效的申报量</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="transport-date" class="form-label required">计划转运日期</label>
+        <input type="date" id="transport-date" class="form-control" required>
+        <div class="error-feedback">请选择计划转运日期</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="transport-time" class="form-label required">计划转运时间</label>
+        <input type="time" id="transport-time" class="form-control" required>
+        <div class="error-feedback">请选择计划转运时间</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="receiver-unit" class="form-label required">接收单位</label>
+        <select id="receiver-unit" class="form-select" required>
+          <option value="">请选择接收单位</option>
+          <option value="江苏省ZZ环保科技有限公司">江苏省ZZ环保科技有限公司</option>
+          <option value="江苏YY环保处理有限公司">江苏YY环保处理有限公司</option>
+        </select>
+        <div class="error-feedback">请选择接收单位</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="waste-source" class="form-label required">废物来源</label>
+        <input type="text" id="waste-source" class="form-control" required placeholder="请输入废物来源">
+        <div class="error-feedback">请输入废物来源</div>
+      </div>
+      
+      <div class="form-btn-group">
+        <button type="button" class="btn btn-secondary" onclick="history.back()">取消</button>
+        <button type="submit" class="btn btn-primary">确认提交</button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- 底部标签栏 -->
+  <div class="tab-bar">
+    <a href="home.html" class="tab-item">
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+    <a href="ledger.html" class="tab-item">
+      <i class="fas fa-book"></i>
+      <span>台账</span>
+    </a>
+    <a href="transfer.html" class="tab-item active">
+      <i class="fas fa-exchange-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="profile.html" class="tab-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+    
+    // 页面加载时检查用户角色
+    document.addEventListener('DOMContentLoaded', function() {
+      // 获取当前用户角色
+      const userRole = localStorage.getItem('userRole') || 'producer';
+      
+      // 如果不是产废单位，跳转回联单页面
+      if (userRole !== 'producer') {
+        window.location.href = 'transfer.html';
+        return;
+      }
+      
+      // 设置今天的日期为默认值
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = (today.getMonth() + 1).toString().padStart(2, '0');
+      const day = today.getDate().toString().padStart(2, '0');
+      
+      document.getElementById('transport-date').value = `${year}-${month}-${day}`;
+      document.getElementById('transport-time').value = '09:00';
+      
+      // 表单提交事件
+      const form = document.getElementById('transfer-form');
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // 验证表单
+        let isValid = true;
+        const formGroups = document.querySelectorAll('.form-group');
+        
+        formGroups.forEach(group => {
+          const input = group.querySelector('input, select');
+          if (input.hasAttribute('required') && !input.value.trim()) {
+            group.classList.add('invalid');
+            isValid = false;
+          } else {
+            group.classList.remove('invalid');
+          }
+        });
+        
+        if (!isValid) {
+          return;
+        }
+        
+        // 收集表单数据
+        const wasteType = document.getElementById('waste-type').value;
+        const wasteAmount = document.getElementById('waste-amount').value;
+        const transportDate = document.getElementById('transport-date').value;
+        const transportTime = document.getElementById('transport-time').value;
+        const receiverUnit = document.getElementById('receiver-unit').value;
+        const wasteSource = document.getElementById('waste-source').value;
+        
+        // 生成随机订单号
+        const date = new Date();
+        const year = date.getFullYear().toString().slice(2);
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const random = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+        const orderNumber = `WS${year}${month}${day}${random}`;
+        
+        // 创建订单数据
+        const orderData = {
+          orderNumber,
+          wasteType,
+          wasteAmount,
+          transportDateTime: `${transportDate} ${transportTime}`,
+          receiverUnit,
+          wasteSource,
+          status: 'created',
+          createTime: new Date().toISOString()
+        };
+        
+        // 保存到本地存储
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        orders.push(orderData);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        
+        // 显示成功提示
+        alert('联单申报成功！联单号：' + orderNumber);
+        
+        // 返回联单列表页
+        window.location.href = 'transfer.html';
+      });
+      
+      // 验证输入
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          const group = this.closest('.form-group');
+          if (this.hasAttribute('required') && !this.value.trim()) {
+            group.classList.add('invalid');
+          } else {
+            group.classList.remove('invalid');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html> 

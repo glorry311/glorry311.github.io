@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>联单详情 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .detail-section {
+      background-color: white;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 393px;
+    }
+    
+    .detail-header {
+      padding: 12px 16px;
+      background-color: #f8f9fa;
+      font-weight: 600;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .detail-content {
+      padding: 16px;
+    }
+    
+    .detail-row {
+      display: flex;
+      margin-bottom: 12px;
+    }
+    
+    .detail-row:last-child {
+      margin-bottom: 0;
+    }
+    
+    .detail-label {
+      width: 100px;
+      color: #8e8e93;
+      font-size: 14px;
+    }
+    
+    .detail-value {
+      flex: 1;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status-created {
+      background-color: #FEF3C7;
+      color: #92400E;
+    }
+    
+    .status-review {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+    
+    .status-transporting {
+      background-color: #E0F2FE;
+      color: #0369A1;
+    }
+    
+    .status-completed {
+      background-color: #e3f9e5;
+      color: #1b873d;
+    }
+    
+    .action-footer {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 0 16px 20px;
+      width: 100%;
+      max-width: 393px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .btn-primary {
+      background-color: #3182ce;
+      color: white;
+    }
+    
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    .btn-danger {
+      background-color: #e53e3e;
+      color: white;
+    }
+    
+    .btn-outline {
+      background-color: white;
+      color: #3182ce;
+      border: 1px solid #3182ce;
+    }
+    
+    .timeline-container {
+      padding: 20px 16px;
+      position: relative;
+    }
+    
+    .timeline-item {
+      display: flex;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .timeline-bullet {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #3182ce;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      margin-right: 16px;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    
+    .timeline-bullet.inactive {
+      background-color: #e2e8f0;
+      color: #a0aec0;
+    }
+    
+    .timeline-content {
+      flex-grow: 1;
+    }
+    
+    .timeline-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #2d3748;
+    }
+    
+    .timeline-subtitle {
+      font-size: 14px;
+      color: #718096;
+      margin-bottom: 8px;
+    }
+    
+    .timeline-info {
+      background-color: #f8fafc;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    
+    .timeline-line {
+      position: absolute;
+      top: 24px;
+      left: 12px;
+      bottom: 0;
+      width: 2px;
+      background-color: #e2e8f0;
+      z-index: 0;
+    }
+    
+    /* 处理滚动问题 */
+    .scroll-container {
+      height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 80px;
+    }
+    
+    /* 确保悬浮按钮在视图内 */
+    .action-fixed {
+      position: fixed;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      z-index: 49;
+      padding: 0 16px 20px;
+      background: linear-gradient(to top, rgba(255,255,255,1) 70%, rgba(255,255,255,0));
+      max-width: 393px;
+      margin: 0 auto;
+    }
+
+    .container {
+      padding: 90px 15px 70px;
+      height: 100%;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 修复iOS状态栏和页面头部 */
+    .ios-status-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 5px 16px;
+      height: 44px;
+      background-color: white;
+    }
+
+    .page-header {
+      position: fixed;
+      top: 44px;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: white;
+      height: 44px;
+    }
+
+    /* 底部标签栏样式 */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: white;
+    }
+
+    /* 退回理由模态框样式 */
+    .reason-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .reason-modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+    
+    .reason-modal-content {
+      width: 85%;
+      max-width: 320px;
+      background-color: white;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    
+    .reason-modal-header {
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .reason-modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+    }
+    
+    .reason-modal-body {
+      padding: 16px;
+    }
+    
+    .reason-textarea {
+      width: 100%;
+      height: 100px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      resize: none;
+    }
+    
+    .reason-modal-footer {
+      display: flex;
+      padding: 12px 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+    
+    .reason-modal-btn {
+      flex: 1;
+      padding: 8px 0;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    .reason-cancel-btn {
+      color: #6b7280;
+    }
+    
+    .reason-confirm-btn {
+      color: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 页面头部 -->
+  <div class="page-header">
+    <div class="action-buttons left-buttons">
+      <i class="fas fa-chevron-left"></i>
+    </div>
+    <div class="page-title">联单详情</div>
+    <div class="action-buttons">
+      <div class="share-dots">
+        <div class="share-dot"></div>
+        <div class="share-dot middle"></div>
+        <div class="share-dot"></div>
+      </div>
+      <div class="home-btn">
+        <div class="home-btn-inner"></div>
+        <div class="home-btn-outer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- 联单基本信息 -->
+    <div class="detail-section">
+      <div class="detail-header">基本信息</div>
+      <div class="detail-content">
+        <div class="detail-row">
+          <div class="detail-label">联单编号</div>
+          <div class="detail-value">WS20230501001</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">废物名称</div>
+          <div class="detail-value">混合废水W1_W2</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">申报时间</div>
+          <div class="detail-value">2023-05-01 10:30</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">申报量</div>
+          <div class="detail-value">50.00 吨</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">实际重量</div>
+          <div class="detail-value" id="actual-weight">--</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">状态</div>
+          <div class="detail-value">
+            <span class="status-badge status-transporting" id="status-badge">运输中</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 产废单位信息 -->
+    <div class="detail-section">
+      <div class="detail-header">产废单位</div>
+      <div class="detail-content">
+        <div class="detail-row">
+          <div class="detail-label">单位名称</div>
+          <div class="detail-value">江苏XX环保科技有限公司</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">联系人</div>
+          <div class="detail-value">张工</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">联系电话</div>
+          <div class="detail-value">138****9876</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">地址</div>
+          <div class="detail-value">江苏省无锡市新吴区创新园A栋</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 处置单位信息 -->
+    <div class="detail-section">
+      <div class="detail-header">处置单位</div>
+      <div class="detail-content">
+        <div class="detail-row">
+          <div class="detail-label">单位名称</div>
+          <div class="detail-value">江阴市XX污水处理有限公司</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">联系人</div>
+          <div class="detail-value">李经理</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">联系电话</div>
+          <div class="detail-value">138****5678</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">地址</div>
+          <div class="detail-value">江苏省江阴市XX区XX街XX号</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 运输信息 -->
+    <div class="detail-section" id="transport-info">
+      <div class="detail-header">运输信息</div>
+      <div class="detail-content">
+        <div class="detail-row">
+          <div class="detail-label">运输单位</div>
+          <div class="detail-value">江阴市XX物流有限公司</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">车牌号</div>
+          <div class="detail-value">苏B12345</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">司机姓名</div>
+          <div class="detail-value">王师傅</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">联系电话</div>
+          <div class="detail-value">135****9012</div>
+        </div>
+        <div class="detail-row" id="departure-time-row">
+          <div class="detail-label">启运时间</div>
+          <div class="detail-value" id="departure-time-value">--</div>
+        </div>
+        <div class="detail-row" id="arrival-time-row" style="display: none;">
+          <div class="detail-label">到达时间</div>
+          <div class="detail-value" id="arrival-time-value">--</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 运输轨迹 -->
+    <div class="detail-section" id="transport-route-section" style="display: none;">
+      <div class="detail-header">运输轨迹</div>
+      <div class="detail-content">
+        <div class="map-container" style="height: 200px; background-color: #f0f0f0; border-radius: 8px; position: relative;">
+          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+            <i class="fas fa-map-marker-alt" style="font-size: 24px; color: #4CAF50;"></i>
+            <p>GPS轨迹地图</p>
+          </div>
+        </div>
+        <div class="map-controls" style="margin-top: 10px; text-align: center;">
+          <button class="action-btn btn-secondary" id="view-route-btn">
+            <i class="fas fa-route"></i>
+            <span>查看路线</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 称重信息 -->
+    <div class="detail-section" id="weight-info-section" style="display: none;">
+      <div class="detail-header">称重信息</div>
+      <div class="detail-content">
+        <div class="detail-row">
+          <div class="detail-label">毛重</div>
+          <div class="detail-value" id="gross-weight-value">--</div>
+        </div>
+        <div class="detail-row" id="empty-weight-row" style="display: none;">
+          <div class="detail-label">皮重</div>
+          <div class="detail-value" id="empty-weight-value">--</div>
+        </div>
+        <div class="detail-row" id="net-weight-row" style="display: none;">
+          <div class="detail-label">净重</div>
+          <div class="detail-value" id="net-weight-value">--</div>
+        </div>
+        <div class="weight-images" id="weight-images" style="margin-top: 10px;">
+          <!-- 称重图片将在这里动态添加 -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- 流程时间线 -->
+    <div class="detail-section">
+      <div class="detail-header">处理流程</div>
+      <div class="timeline-container">
+        <div class="timeline-line"></div>
+        
+        <div class="timeline-item">
+          <div class="timeline-bullet">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">创建联单</div>
+            <div class="timeline-subtitle">2023-05-01 10:30</div>
+            <div class="timeline-info">
+              张工创建了废水转移联单
+            </div>
+          </div>
+        </div>
+        
+        <div class="timeline-item" id="timeline-review">
+          <div class="timeline-bullet">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">审核中</div>
+            <div class="timeline-subtitle">2023-05-01 14:20</div>
+            <div class="timeline-info">
+              处置单位已审核通过联单申请
+            </div>
+          </div>
+        </div>
+        
+        <div class="timeline-item" id="timeline-transport">
+          <div class="timeline-bullet">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">运输中</div>
+            <div class="timeline-subtitle">2023-05-02 09:15</div>
+            <div class="timeline-info">
+              司机已扫码接收废水，开始运输
+            </div>
+          </div>
+        </div>
+        
+        <div class="timeline-item" id="timeline-complete">
+          <div class="timeline-bullet inactive">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">废水接收完成</div>
+            <div class="timeline-subtitle">-</div>
+            <div class="timeline-info">
+              等待处置单位接收废水
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 底部操作按钮 -->
+    <div class="action-footer">
+      <button class="action-btn btn-secondary">
+        <i class="fas fa-phone"></i>
+        <span>联系司机</span>
+      </button>
+      <button class="action-btn btn-primary">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>查看位置</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- 底部标签栏 -->
+  <div class="tab-bar">
+    <a href="home.html" class="tab-item">
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+    <a href="ledger.html" class="tab-item">
+      <i class="fas fa-book"></i>
+      <span>台账</span>
+    </a>
+    <a href="transfer.html" class="tab-item active">
+      <i class="fas fa-exchange-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="profile.html" class="tab-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <!-- 主内容下方添加退回理由模态框 -->
+  <div id="reject-reason-modal" class="reason-modal">
+    <div class="reason-modal-content">
+      <div class="reason-modal-header">
+        <h3 class="reason-modal-title">退回理由</h3>
+      </div>
+      <div class="reason-modal-body">
+        <textarea id="reject-reason" class="reason-textarea" placeholder="请输入退回理由..."></textarea>
+      </div>
+      <div class="reason-modal-footer">
+        <div id="cancel-reject-btn" class="reason-modal-btn reason-cancel-btn">取消</div>
+        <div id="confirm-reject-btn" class="reason-modal-btn reason-confirm-btn">确定</div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+    
+    // 页面返回按钮
+    document.querySelector('.left-buttons').addEventListener('click', function() {
+      window.history.back();
+    });
+    
+    // 获取URL参数
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    
+    // 更新联单状态
+    function updateOrderStatus(status) {
+      const statusBadge = document.getElementById('status-badge');
+      
+      if (status === 'waiting') {
+        statusBadge.textContent = '等待运输';
+        statusBadge.className = 'status-badge status-waiting';
+      } else if (status === 'transporting') {
+        statusBadge.textContent = '运输中';
+        statusBadge.className = 'status-badge status-transporting';
+      } else if (status === 'arrived') {
+        statusBadge.textContent = '已到达';
+        statusBadge.className = 'status-badge status-arrived';
+      } else if (status === 'completed') {
+        statusBadge.textContent = '已完成';
+        statusBadge.className = 'status-badge status-completed';
+      }
+    }
+    
+    // 根据用户角色更新视图
+    function updateViewByRole(role) {
+      const status = getUrlParameter('status') || 'waiting';
+      const actionFooter = document.querySelector('.action-footer');
+      
+      if (role === 'receiver') {
+        // 收处单位视图
+        if (status === 'transporting') {
+          // 运输中状态，显示确认入库和退回按钮
+          actionFooter.innerHTML = `
+            <button class="action-btn btn-secondary" id="reject-btn">
+              <i class="fas fa-times"></i>
+              <span>退回</span>
+            </button>
+            <button class="action-btn btn-primary" id="confirm-storage-btn">
+              <i class="fas fa-check"></i>
+              <span>确认入库</span>
+            </button>
+          `;
+          
+          // 设置退回按钮事件
+          document.getElementById('reject-btn').addEventListener('click', function() {
+            const rejectReasonModal = document.getElementById('reject-reason-modal');
+            rejectReasonModal.classList.add('show');
+            
+            // 设置确认按钮事件
+            const confirmRejectBtn = rejectReasonModal.querySelector('.reason-confirm-btn');
+            confirmRejectBtn.onclick = function() {
+              const reason = rejectReasonModal.querySelector('.reason-textarea').value.trim();
+              if (!reason) {
+                alert('请输入退回理由');
+                return;
+              }
+              
+              // 更新状态为已退回
+              updateOrderStatus('rejected');
+              
+              // 添加退回理由到详情
+              const detailContent = document.querySelector('.detail-content');
+              const rejectReason = document.createElement('div');
+              rejectReason.className = 'detail-row';
+              rejectReason.innerHTML = `
+                <div class="detail-label">退回理由</div>
+                <div class="detail-value">${reason}</div>
+              `;
+              detailContent.appendChild(rejectReason);
+              
+              // 隐藏底部按钮
+              actionFooter.style.display = 'none';
+              
+              // 关闭模态框
+              rejectReasonModal.classList.remove('show');
+              rejectReasonModal.querySelector('.reason-textarea').value = '';
+              
+              alert('已退回联单');
+            };
+          });
+          
+          // 设置确认入库按钮事件
+          document.getElementById('confirm-storage-btn').addEventListener('click', function() {
+            // 更新状态为已完成
+            updateOrderStatus('completed');
+            
+            // 显示完整的称重信息
+            document.getElementById('weight-info-section').style.display = '';
+            document.getElementById('gross-weight-value').textContent = '30.00吨 (图片1)';
+            document.getElementById('empty-weight-row').style.display = '';
+            document.getElementById('empty-weight-value').textContent = '10.00吨 (图片2)';
+            document.getElementById('net-weight-row').style.display = '';
+            document.getElementById('net-weight-value').textContent = '20.00吨';
+            
+            // 隐藏底部按钮
+            actionFooter.style.display = 'none';
+            
+            alert('已确认入库！');
+          });
+        }
+      } else if (role === 'transporter') {
+        // 运输单位视图
+        if (status === 'waiting') {
+          // 等待运输状态，需要先扫码
+          actionFooter.innerHTML = `
+            <button class="action-btn btn-secondary" id="scan-btn">
+              <i class="fas fa-qrcode"></i>
+              <span>扫码</span>
+            </button>
+            <button class="action-btn btn-primary" id="start-transport-btn" disabled>
+              <i class="fas fa-truck"></i>
+              <span>开始运输</span>
+            </button>
+          `;
+          
+          // 设置扫码按钮事件
+          document.getElementById('scan-btn').addEventListener('click', function() {
+            alert('启动扫描二维码功能');
+            // 模拟扫码成功
+            setTimeout(() => {
+              document.getElementById('start-transport-btn').disabled = false;
+              alert('二维码扫描成功！');
+            }, 1500);
+          });
+          
+          // 设置开始运输按钮事件
+          document.getElementById('start-transport-btn').addEventListener('click', function() {
+            if (!this.disabled) {
+              updateOrderStatus('transporting');
+              actionFooter.innerHTML = `
+                <button class="action-btn btn-primary" id="confirm-arrival-btn">
+                  <i class="fas fa-check-circle"></i>
+                  <span>确认到达</span>
+                </button>
+              `;
+              
+              // 设置确认到达按钮事件
+              document.getElementById('confirm-arrival-btn').addEventListener('click', function() {
+                confirmArrival();
+              });
+            }
+          });
+        }
+      }
+    }
+    
+    // 确认到达处理
+    function confirmArrival() {
+      // 更新状态为已到达
+      updateOrderStatus('arrived');
+      
+      // 显示到达时间
+      const now = new Date();
+      const timeString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      // 显示到达时间行
+      document.getElementById('arrival-time-row').style.display = '';
+      document.getElementById('arrival-time-value').textContent = timeString;
+      
+      // 显示运输轨迹
+      document.getElementById('transport-route-section').style.display = '';
+      
+      // 显示称重信息
+      document.getElementById('weight-info-section').style.display = '';
+      document.getElementById('gross-weight-value').textContent = '30.00吨 (图片1)';
+      
+      // 添加称重图片
+      document.getElementById('weight-images').innerHTML = `
+        <div style="display: inline-block; margin: 5px; text-align: center;">
+          <div style="width: 80px; height: 80px; background-color: #e0e0e0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-image" style="font-size: 24px; color: #757575;"></i>
+          </div>
+          <div style="font-size: 12px; margin-top: 4px;">毛重图片</div>
+        </div>
+      `;
+      
+      // 更新底部按钮
+      const actionFooter = document.querySelector('.action-footer');
+      actionFooter.innerHTML = `
+        <button class="action-btn btn-secondary" id="contact-btn">
+          <i class="fas fa-phone"></i>
+          <span>联系收处单位</span>
+        </button>
+        <button class="action-btn btn-primary" id="view-route-btn">
+          <i class="fas fa-route"></i>
+          <span>查看轨迹</span>
+        </button>
+      `;
+      
+      alert('已确认到达！已记录第一次称重数据');
+    }
+    
+    // 页面加载时执行
+    document.addEventListener('DOMContentLoaded', function() {
+      const status = getUrlParameter('status') || 'waiting';
+      
+      // 初始化页面状态
+      updateOrderStatus(status);
+      
+      // 根据状态初始化运输信息
+      if (status === 'waiting') {
+        // 等待运输状态，不显示启运时间
+        document.getElementById('departure-time-value').textContent = '--';
+      } else if (status === 'transporting') {
+        // 运输中状态，显示启运时间
+        const now = new Date();
+        now.setHours(now.getHours() - 1); // 假设一小时前启运
+        const timeString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        document.getElementById('departure-time-value').textContent = timeString;
+      } else if (status === 'arrived' || status === 'completed') {
+        // 已到达或已完成状态，显示启运和到达时间
+        const departureTime = new Date();
+        departureTime.setHours(departureTime.getHours() - 2);
+        const departureTimeString = `${departureTime.getFullYear()}-${String(departureTime.getMonth() + 1).padStart(2, '0')}-${String(departureTime.getDate()).padStart(2, '0')} ${String(departureTime.getHours()).padStart(2, '0')}:${String(departureTime.getMinutes()).padStart(2, '0')}`;
+        
+        const arrivalTime = new Date();
+        arrivalTime.setMinutes(arrivalTime.getMinutes() - 30);
+        const arrivalTimeString = `${arrivalTime.getFullYear()}-${String(arrivalTime.getMonth() + 1).padStart(2, '0')}-${String(arrivalTime.getDate()).padStart(2, '0')} ${String(arrivalTime.getHours()).padStart(2, '0')}:${String(arrivalTime.getMinutes()).padStart(2, '0')}`;
+        
+        document.getElementById('departure-time-value').textContent = departureTimeString;
+        document.getElementById('arrival-time-row').style.display = '';
+        document.getElementById('arrival-time-value').textContent = arrivalTimeString;
+        
+        // 显示运输轨迹
+        document.getElementById('transport-route-section').style.display = '';
+        
+        // 显示称重信息
+        document.getElementById('weight-info-section').style.display = '';
+        
+        if (status === 'completed') {
+          // 已完成状态，显示完整的称重信息
+          document.getElementById('gross-weight-value').textContent = '30.00吨 (图片1)';
+          document.getElementById('empty-weight-row').style.display = '';
+          document.getElementById('empty-weight-value').textContent = '10.00吨 (图片2)';
+          document.getElementById('net-weight-row').style.display = '';
+          document.getElementById('net-weight-value').textContent = '20.00吨';
+          
+          // 添加称重图片
+          document.getElementById('weight-images').innerHTML = `
+            <div style="display: inline-block; margin: 5px; text-align: center;">
+              <div style="width: 80px; height: 80px; background-color: #e0e0e0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-image" style="font-size: 24px; color: #757575;"></i>
+              </div>
+              <div style="font-size: 12px; margin-top: 4px;">毛重图片</div>
+            </div>
+            <div style="display: inline-block; margin: 5px; text-align: center;">
+              <div style="width: 80px; height: 80px; background-color: #e0e0e0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-image" style="font-size: 24px; color: #757575;"></i>
+              </div>
+              <div style="font-size: 12px; margin-top: 4px;">皮重图片</div>
+            </div>
+          `;
+        } else {
+          // 已到达状态，只显示毛重
+          document.getElementById('gross-weight-value').textContent = '30.00吨 (图片1)';
+          
+          // 添加称重图片
+          document.getElementById('weight-images').innerHTML = `
+            <div style="display: inline-block; margin: 5px; text-align: center;">
+              <div style="width: 80px; height: 80px; background-color: #e0e0e0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-image" style="font-size: 24px; color: #757575;"></i>
+              </div>
+              <div style="font-size: 12px; margin-top: 4px;">毛重图片</div>
+            </div>
+          `;
+        }
+      }
+      
+      // 初始化底部按钮
+      updateViewByRole(localStorage.getItem('userRole') || 'producer');
+      
+      // 路线查看按钮事件
+      document.addEventListener('click', function(e) {
+        if (e.target && e.target.closest('#view-route-btn')) {
+          alert('查看GPS运输轨迹地图');
+        }
+      });
+
+      // 退回按钮功能
+      const rejectBtn = document.querySelector('.reject-btn');
+      const rejectReasonModal = document.getElementById('reject-reason-modal');
+      const cancelRejectBtn = document.getElementById('cancel-reject-btn');
+      const confirmRejectBtn = document.getElementById('confirm-reject-btn');
+      
+      if (rejectBtn) {
+        rejectBtn.addEventListener('click', function() {
+          rejectReasonModal.classList.add('show');
+        });
+      }
+      
+      if (cancelRejectBtn) {
+        cancelRejectBtn.addEventListener('click', function() {
+          rejectReasonModal.classList.remove('show');
+          document.getElementById('reject-reason').value = '';
+        });
+      }
+      
+      if (confirmRejectBtn) {
+        confirmRejectBtn.addEventListener('click', function() {
+          const reason = document.getElementById('reject-reason').value.trim();
+          if (!reason) {
+            alert('请输入退回理由');
+            return;
+          }
+          
+          alert(`已退回此联单\n退回理由: ${reason}`);
+          rejectReasonModal.classList.remove('show');
+          document.getElementById('reject-reason').value = '';
+          
+          // 可以在这里添加跳转逻辑
+          // window.location.href = 'transfer.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

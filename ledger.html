@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>台账 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="common.css" rel="stylesheet">
+  <style>
+    .record-item {
+      background-color: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .record-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .record-item-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .record-item-date {
+      color: #8e8e93;
+      font-size: 14px;
+    }
+    
+    .record-item-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+    
+    .record-item-label {
+      color: #8e8e93;
+    }
+    
+    .record-item-value {
+      font-weight: 500;
+    }
+    
+    .statistics-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .statistic-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .statistic-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background-color: rgba(0, 122, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      color: #007aff;
+    }
+    
+    .statistic-icon i {
+      font-size: 24px;
+    }
+    
+    .statistic-content {
+      flex: 1;
+    }
+    
+    .statistic-value {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .statistic-label {
+      font-size: 14px;
+      color: #8e8e93;
+    }
+    
+    .empty-text {
+      text-align: center;
+      color: #8e8e93;
+      padding: 40px 0;
+    }
+    
+    /* 过滤条样式 */
+    .filter-bar {
+      background: white;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .filter-input {
+      position: relative;
+      margin-bottom: 10px;
+    }
+    
+    .filter-input input {
+      width: 100%;
+      padding: 10px 10px 10px 36px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      background-color: #f9f9f9;
+    }
+    
+    .filter-input i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+    }
+    
+    .filter-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .filter-date {
+      display: flex;
+      align-items: center;
+      background-color: #f9f9f9;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      color: #718096;
+      font-size: 14px;
+    }
+    
+    .filter-date i {
+      margin-right: 8px;
+    }
+    
+    .filter-button {
+      background: linear-gradient(135deg, #3182ce, #4299e1);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .filter-button i {
+      margin-right: 6px;
+    }
+    
+    /* 台账数据列表 */
+    .ledger-list {
+      margin-bottom: 80px;
+    }
+    
+    .ledger-header {
+      display: flex;
+      background-color: #f7fafc;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4a5568;
+      border-radius: 8px 8px 0 0;
+    }
+    
+    .ledger-col {
+      flex: 1;
+    }
+    
+    .ledger-col.small {
+      flex: 0.6;
+    }
+    
+    .ledger-item {
+      display: flex;
+      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      align-items: center;
+    }
+    
+    .ledger-col-data {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .col-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: #2d3748;
+      margin-bottom: 5px;
+    }
+    
+    .col-subtitle {
+      font-size: 13px;
+      color: #718096;
+    }
+    
+    .col-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #3182ce;
+    }
+    
+    .col-small {
+      flex: 0.6;
+      text-align: center;
+    }
+    
+    /* 分页控制器 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0 40px;
+    }
+    
+    .page-button {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: white;
+      color: #4a5568;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      margin: 0 5px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .page-button:active {
+      background-color: #f7fafc;
+    }
+    
+    .page-button.active {
+      background: linear-gradient(135deg, #3182ce, #4299e1);
+      color: white;
+    }
+    
+    .page-dots {
+      margin: 0 5px;
+      color: #a0aec0;
+    }
+    
+    /* 滚动容器 */
+    .scroll-container {
+      padding-bottom: 80px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      height: 100%;
+    }
+    
+    /* 添加产生量/转移量切换样式 */
+    .tab-buttons {
+      display: flex;
+      background-color: #f2f2f7;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    
+    .tab-button {
+      flex: 1;
+      text-align: center;
+      padding: 12px 0;
+      font-size: 15px;
+      font-weight: 500;
+      color: #718096;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .tab-button.active {
+      background-color: #3182ce;
+      color: white;
+    }
+    
+    /* 添加悬浮按钮样式 */
+    .add-fab {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background-color: #3b82f6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      z-index: 1000;
+    }
+    
+    .add-fab:active {
+      transform: scale(0.9);
+    }
+    
+    /* 添加废水模态框样式 */
+    .add-waste-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .add-waste-modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      width: 100%;
+      max-width: 380px;
+      background-color: white;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+    
+    .modal-close {
+      font-size: 20px;
+      color: #718096;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      padding: 16px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      transition: all 0.2s ease;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #3182ce;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+    
+    .form-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      transition: all 0.2s ease;
+    }
+    
+    .form-select:focus {
+      outline: none;
+      border-color: #3182ce;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+    
+    .modal-footer {
+      padding: 16px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid #f0f0f0;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background-color: #3182ce;
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2c5282;
+    }
+    
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: #4a5568;
+      border: none;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #cbd5e0;
+    }
+    
+    /* 视图容器 */
+    .view-container {
+      display: none;
+    }
+    
+    .view-container.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS 状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 页面头部 -->
+  <div class="page-header">
+    <div class="action-buttons left-buttons">
+      <!-- 占位，保持标题居中 -->
+    </div>
+    <div class="page-title">台账</div>
+    <div class="action-buttons">
+      <div class="share-dots">
+        <div class="share-dot"></div>
+        <div class="share-dot middle"></div>
+        <div class="share-dot"></div>
+      </div>
+      <div class="home-btn">
+        <div class="home-btn-inner"></div>
+        <div class="home-btn-outer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 主内容 -->
+  <div class="container">
+    <div class="scroll-container">
+      <!-- 过滤条 -->
+      <div class="filter-bar">
+        <div class="filter-input">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="搜索废水类型...">
+        </div>
+        <div class="filter-actions">
+          <div class="filter-date">
+            <i class="fas fa-calendar-alt"></i>
+            <span>2023-01-01 - 2023-05-31</span>
+          </div>
+          <button class="filter-button">
+            <i class="fas fa-filter"></i>
+            <span>筛选</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 产生量/转移量切换标签 -->
+      <div class="tab-buttons">
+        <div class="tab-button active" id="production-tab">
+          <i class="fas fa-water"></i> 产生量
+        </div>
+        <div class="tab-button" id="transfer-tab">
+          <i class="fas fa-exchange-alt"></i> 转移量
+        </div>
+      </div>
+      
+      <!-- 台账统计卡片 -->
+      <div class="statistics-card">
+        <div class="statistic-item">
+          <div class="statistic-icon">
+            <i class="fas fa-water"></i>
+          </div>
+          <div class="statistic-content">
+            <div class="statistic-value">1,285.50 吨</div>
+            <div class="statistic-label">当年累计产废量</div>
+          </div>
+        </div>
+        <div class="statistic-item">
+          <div class="statistic-icon" style="background-color: rgba(52, 211, 153, 0.1); color: #34d399;">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <div class="statistic-content">
+            <div class="statistic-value">1,050.25 吨</div>
+            <div class="statistic-label">实际转移量</div>
+          </div>
+        </div>
+        <div class="statistic-item">
+          <div class="statistic-icon" style="background-color: rgba(251, 191, 36, 0.1); color: #fbbf24;">
+            <i class="fas fa-warehouse"></i>
+          </div>
+          <div class="statistic-content">
+            <div class="statistic-value">235.25 吨</div>
+            <div class="statistic-label">当前剩余存储量</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 产生量视图 -->
+      <div class="view-container active" id="production-view">
+        <!-- 台账列表 -->
+        <div class="ledger-list">
+          <!-- 产生量列表项 -->
+          <div class="ledger-item">
+            <div class="ledger-col-data">
+              <div class="col-title">混合废水W1_W2</div>
+              <div class="col-subtitle">2023-05-01</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">贮存设备</div>
+              <div class="col-value">储水罐 #1</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">产生量</div>
+              <div class="col-value">85.50 吨</div>
+            </div>
+            <div class="ledger-col-data col-small">
+              <button class="icon-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="ledger-item">
+            <div class="ledger-col-data">
+              <div class="col-title">脱脂废水</div>
+              <div class="col-subtitle">2023-04-28</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">贮存设备</div>
+              <div class="col-value">储水罐 #3</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">产生量</div>
+              <div class="col-value">65.20 吨</div>
+            </div>
+            <div class="ledger-col-data col-small">
+              <button class="icon-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="ledger-item">
+            <div class="ledger-col-data">
+              <div class="col-title">含氰废水</div>
+              <div class="col-subtitle">2023-04-25</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">贮存设备</div>
+              <div class="col-value">储水罐 #4</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">产生量</div>
+              <div class="col-value">42.30 吨</div>
+            </div>
+            <div class="ledger-col-data col-small">
+              <button class="icon-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 转移量视图 -->
+      <div class="view-container" id="transfer-view">
+        <div class="ledger-list">
+          <!-- 转移量列表项 -->
+          <div class="ledger-item">
+            <div class="ledger-col-data">
+              <div class="col-title">混合废水W1_W2</div>
+              <div class="col-subtitle">2023-05-03</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">转移量</div>
+              <div class="col-value">70.25 吨</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">收水单位</div>
+              <div class="col-value">江阴市XX污水处理有限公司</div>
+            </div>
+            <div class="ledger-col-data col-small">
+              <button class="icon-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="ledger-item">
+            <div class="ledger-col-data">
+              <div class="col-title">脱脂废水</div>
+              <div class="col-subtitle">2023-05-02</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">转移量</div>
+              <div class="col-value">50.40 吨</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">收水单位</div>
+              <div class="col-value">江阴市XX污水处理有限公司</div>
+            </div>
+            <div class="ledger-col-data col-small">
+              <button class="icon-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="ledger-item">
+            <div class="ledger-col-data">
+              <div class="col-title">含氰废水</div>
+              <div class="col-subtitle">2023-04-25</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">转移量</div>
+              <div class="col-value">35.75 吨</div>
+            </div>
+            <div class="ledger-col-data">
+              <div class="col-subtitle">收水单位</div>
+              <div class="col-value">江阴市XX污水处理有限公司</div>
+            </div>
+            <div class="ledger-col-data col-small">
+              <button class="icon-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 分页控制 -->
+      <div class="pagination">
+        <div class="page-button">
+          <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="page-button active">1</div>
+        <div class="page-button">2</div>
+        <div class="page-button">3</div>
+        <div class="page-dots">...</div>
+        <div class="page-button">8</div>
+        <div class="page-button">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 添加按钮 (仅在产生量页面显示) -->
+  <a href="#" class="add-fab" id="add-waste-btn">
+    <i class="fas fa-plus"></i>
+  </a>
+  
+  <!-- 添加废水模态框 -->
+  <div class="add-waste-modal" id="add-waste-modal">
+    <div class="modal-content" onclick="event.stopPropagation();">
+      <div class="modal-header">
+        <div class="modal-title">新增产废记录</div>
+        <div class="modal-close" id="close-modal"><i class="fas fa-times"></i></div>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">废物名称</label>
+          <select class="form-select" id="waste-type-input">
+            <option value="">请选择废物名称</option>
+            <option value="混合废水W1_W2">混合废水W1_W2</option>
+            <option value="脱脂废水">脱脂废水</option>
+            <option value="含氰废水">含氰废水</option>
+            <option value="酸洗废水">酸洗废水</option>
+            <option value="含铬废水">含铬废水</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">贮存设备</label>
+          <select class="form-select" id="storage-input">
+            <option value="">请选择贮存设备</option>
+            <option value="储水罐 #1">储水罐 #1</option>
+            <option value="储水罐 #2">储水罐 #2</option>
+            <option value="储水罐 #3">储水罐 #3</option>
+            <option value="储水罐 #4">储水罐 #4</option>
+            <option value="储水罐 #5">储水罐 #5</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">产生量 (吨)</label>
+          <input type="number" class="form-control" id="amount-input" step="0.01" placeholder="请输入产生量">
+        </div>
+        <div class="form-group">
+          <label class="form-label">时间</label>
+          <input type="date" class="form-control" id="date-input">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-btn">取消</button>
+        <button class="btn btn-primary" id="confirm-btn">确定</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 底部导航栏 -->
+  <div class="tab-bar">
+    <a href="home.html" class="tab-item">
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+    <a href="ledger.html" class="tab-item active">
+      <i class="fas fa-book"></i>
+      <span>台账</span>
+    </a>
+    <a href="transfer.html" class="tab-item">
+      <i class="fas fa-file-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="profile.html" class="tab-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <!-- 微信分享模态框 -->
+  <div id="share-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        分享
+        <button class="modal-close-btn" id="close-share-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="share-options grid grid-cols-4 gap-4">
+          <div class="share-option text-center">
+            <div class="share-icon bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+              <i class="fab fa-weixin text-xl"></i>
+            </div>
+            <div class="text-sm mt-2">微信好友</div>
+          </div>
+          <div class="share-option text-center">
+            <div class="share-icon bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+              <i class="fas fa-users text-xl"></i>
+            </div>
+            <div class="text-sm mt-2">朋友圈</div>
+          </div>
+          <div class="share-option text-center">
+            <div class="share-icon bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+              <i class="fab fa-qq text-xl"></i>
+            </div>
+            <div class="text-sm mt-2">QQ</div>
+          </div>
+          <div class="share-option text-center">
+            <div class="share-icon bg-blue-400 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+              <i class="fas fa-link text-xl"></i>
+            </div>
+            <div class="text-sm mt-2">复制链接</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+    
+    // 根据用户角色初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      const userRole = localStorage.getItem('userRole') || 'producer';
+      
+      // 如果是运输单位，隐藏台账tab并重定向到首页
+      if (userRole === 'transporter') {
+        // 获取底部导航栏中的台账标签
+        const ledgerTab = document.querySelector('.tab-bar a[href="ledger.html"]');
+        
+        if (ledgerTab) {
+          // 隐藏台账标签
+          ledgerTab.style.display = 'none';
+          
+          // 重新分配底部标签栏空间
+          const tabBar = document.querySelector('.tab-bar');
+          const tabItems = tabBar.querySelectorAll('.tab-item');
+          
+          tabItems.forEach(item => {
+            if (item.style.display !== 'none') {
+              item.style.flex = '1';
+            }
+          });
+          
+          // 如果当前页面是台账页面，重定向到首页
+          window.location.href = 'home.html';
+        }
+      } else {
+        // 产生量/转移量标签切换
+        const productionTab = document.getElementById('production-tab');
+        const transferTab = document.getElementById('transfer-tab');
+        const productionView = document.getElementById('production-view');
+        const transferView = document.getElementById('transfer-view');
+        const addWasteBtn = document.getElementById('add-waste-btn');
+        
+        if (userRole === 'receiver') {
+          // 收处单位视图
+          
+          // 修改页面标题
+          document.querySelector('.page-title').textContent = '处理台账';
+          
+          // 移除产生量/转移量标签
+          const tabButtons = document.querySelector('.tab-buttons');
+          if (tabButtons) {
+            tabButtons.remove();
+          }
+          
+          // 修改统计卡片
+          const statisticsCard = document.querySelector('.statistics-card');
+          if (statisticsCard) {
+            statisticsCard.innerHTML = `
+              <div class="statistic-item">
+                <div class="statistic-icon">
+                  <i class="fas fa-water"></i>
+                </div>
+                <div class="statistic-content">
+                  <div class="statistic-value">24,850.75 吨</div>
+                  <div class="statistic-label">当年累计处理量</div>
+                </div>
+              </div>
+              <div class="statistic-item">
+                <div class="statistic-icon" style="background-color: rgba(52, 211, 153, 0.1); color: #34d399;">
+                  <i class="fas fa-warehouse"></i>
+                </div>
+                <div class="statistic-content">
+                  <div class="statistic-value">9,276.75 吨</div>
+                  <div class="statistic-label">年处理能力余量</div>
+                </div>
+              </div>
+              <div class="statistic-item">
+                <div class="statistic-icon" style="background-color: rgba(251, 191, 36, 0.1); color: #fbbf24;">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="statistic-content">
+                  <div class="statistic-value">72.8%</div>
+                  <div class="statistic-label">处理能力利用率</div>
+                </div>
+              </div>
+            `;
+          }
+          
+          // 更新台账列表内容
+          const ledgerList = document.querySelector('.ledger-list');
+          if (ledgerList) {
+            // 隐藏产生量和转移量视图
+            if (productionView) productionView.style.display = 'none';
+            if (transferView) transferView.style.display = 'none';
+            
+            // 创建收处单位视图
+            const receiverView = document.createElement('div');
+            receiverView.className = 'view-container active';
+            receiverView.id = 'receiver-view';
+            
+            receiverView.innerHTML = `
+              <div class="ledger-list">
+                <!-- 处理记录列表项 -->
+                <div class="ledger-item">
+                  <div class="ledger-col-data">
+                    <div class="col-title">江阴市XX电镀有限公司</div>
+                    <div class="col-subtitle">混合废水W1_W2</div>
+                  </div>
+                  <div class="ledger-col-data">
+                    <div class="col-subtitle">处理量</div>
+                    <div class="col-value">70.25 吨</div>
+                  </div>
+                  <div class="ledger-col-data">
+                    <div class="col-subtitle">收水日期</div>
+                    <div class="col-value">2023-05-03</div>
+                  </div>
+                  <div class="ledger-col-data col-small">
+                    <button class="icon-btn">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="ledger-item">
+                  <div class="ledger-col-data">
+                    <div class="col-title">江阴市XX电镀有限公司</div>
+                    <div class="col-subtitle">脱脂废水</div>
+                  </div>
+                  <div class="ledger-col-data">
+                    <div class="col-subtitle">处理量</div>
+                    <div class="col-value">50.40 吨</div>
+                  </div>
+                  <div class="ledger-col-data">
+                    <div class="col-subtitle">收水日期</div>
+                    <div class="col-value">2023-05-02</div>
+                  </div>
+                  <div class="ledger-col-data col-small">
+                    <button class="icon-btn">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="ledger-item">
+                  <div class="ledger-col-data">
+                    <div class="col-title">江苏YY环保有限公司</div>
+                    <div class="col-subtitle">含氰废水</div>
+                  </div>
+                  <div class="ledger-col-data">
+                    <div class="col-subtitle">处理量</div>
+                    <div class="col-value">35.75 吨</div>
+                  </div>
+                  <div class="ledger-col-data">
+                    <div class="col-subtitle">收水日期</div>
+                    <div class="col-value">2023-04-25</div>
+                  </div>
+                  <div class="ledger-col-data col-small">
+                    <button class="icon-btn">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="ledger-item">
+                  <div class="ledger-col-data">
+                    <div class="col-title">无锡ZZ科技集团</div>
+                    <div class="col-subtitle">含铬废水</div>
+                  </div>
+                  <div class="ledger-col-data">
+                    <div class="col-subtitle">处理量</div>
+                    <div class="col-value">42.80 吨</div>
+                  </div>
+                  <div class="ledger-col-data">
+                    <div class="col-subtitle">收水日期</div>
+                    <div class="col-value">2023-04-28</div>
+                  </div>
+                  <div class="ledger-col-data col-small">
+                    <button class="icon-btn">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+            
+            // 将收处单位视图添加到容器中
+            const scrollContainer = document.querySelector('.scroll-container');
+            if (scrollContainer) {
+              if (ledgerList.parentNode) {
+                ledgerList.parentNode.parentNode.appendChild(receiverView);
+              } else {
+                scrollContainer.appendChild(receiverView);
+              }
+            }
+          }
+          
+          // 隐藏添加按钮
+          if (addWasteBtn) {
+            addWasteBtn.style.display = 'none';
+          }
+          
+          // 修改搜索框placeholder
+          const searchInput = document.querySelector('.filter-input input');
+          if (searchInput) {
+            searchInput.placeholder = "搜索产废单位、废水类型...";
+          }
+          
+        } else {
+          // 设置标签切换
+          if (productionTab && transferTab && productionView && transferView && addWasteBtn) {
+            productionTab.addEventListener('click', function() {
+              productionTab.classList.add('active');
+              transferTab.classList.remove('active');
+              productionView.classList.add('active');
+              transferView.classList.remove('active');
+              addWasteBtn.style.display = 'flex'; // 显示添加按钮
+            });
+            
+            transferTab.addEventListener('click', function() {
+              transferTab.classList.add('active');
+              productionTab.classList.remove('active');
+              transferView.classList.add('active');
+              productionView.classList.remove('active');
+              addWasteBtn.style.display = 'none'; // 隐藏添加按钮
+            });
+            
+            // 初始显示产生量视图
+            productionTab.click();
+          }
+        }
+      }
+      
+      // 确保加号按钮在屏幕范围内
+      const addFabBtn = document.querySelector('.add-fab');
+      if (addFabBtn) {
+        addFabBtn.style.position = 'fixed';
+        addFabBtn.style.bottom = '100px';
+        addFabBtn.style.right = '20px';
+        addFabBtn.style.zIndex = '1000';
+      }
+    });
+    
+    // 设置当前日期为默认值
+    const dateInput = document.getElementById('date-input');
+    if (dateInput) {
+      dateInput.valueAsDate = new Date();
+    }
+    
+    // 添加废水模态框
+    const addWasteModal = document.getElementById('add-waste-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const confirmBtn = document.getElementById('confirm-btn');
+    
+    if (addWasteModal && closeModalBtn && cancelBtn && confirmBtn) {
+      // 打开模态框
+      const addWasteBtn = document.getElementById('add-waste-btn');
+      if (addWasteBtn) {
+        addWasteBtn.addEventListener('click', function() {
+          addWasteModal.classList.add('show');
+        });
+      }
+      
+      // 关闭模态框
+      function closeModal() {
+        addWasteModal.classList.remove('show');
+      }
+      
+      closeModalBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+      
+      // 点击模态框外部关闭
+      addWasteModal.addEventListener('click', function(e) {
+        if (e.target === addWasteModal) {
+          closeModal();
+        }
+      });
+      
+      // 提交新增产废记录
+      confirmBtn.addEventListener('click', function() {
+        const wasteTypeInput = document.getElementById('waste-type-input');
+        const storageInput = document.getElementById('storage-input');
+        const amountInput = document.getElementById('amount-input');
+        const dateInput = document.getElementById('date-input');
+        
+        if (!wasteTypeInput || !storageInput || !amountInput || !dateInput) return;
+        
+        const wasteType = wasteTypeInput.value;
+        const storage = storageInput.value;
+        const amount = amountInput.value;
+        const date = dateInput.value;
+        
+        if (!wasteType || !storage || !amount || !date) {
+          alert('请填写完整信息');
+          return;
+        }
+        
+        // 创建新的产废记录
+        const newRecord = document.createElement('div');
+        newRecord.className = 'ledger-item';
+        newRecord.innerHTML = `
+          <div class="ledger-col-data">
+            <div class="col-title">${wasteType}</div>
+            <div class="col-subtitle">${date}</div>
+          </div>
+          <div class="ledger-col-data">
+            <div class="col-subtitle">贮存设备</div>
+            <div class="col-value">${storage}</div>
+          </div>
+          <div class="ledger-col-data">
+            <div class="col-subtitle">产生量</div>
+            <div class="col-value">${amount} 吨</div>
+          </div>
+          <div class="ledger-col-data col-small">
+            <button class="icon-btn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        `;
+        
+        // 将新记录添加到列表最前面
+        const ledgerList = document.querySelector('#production-view .ledger-list');
+        if (ledgerList) {
+          ledgerList.insertBefore(newRecord, ledgerList.firstChild);
+        }
+        
+        // 关闭模态框并重置表单
+        closeModal();
+        wasteTypeInput.value = '';
+        storageInput.value = '';
+        amountInput.value = '';
+        dateInput.valueAsDate = new Date();
+        
+        // 显示添加成功提示
+        alert('添加成功');
+      });
+    }
+    
+    // 废物类型与贮存设备关联
+    const wasteTypeInput = document.getElementById('waste-type-input');
+    const storageInput = document.getElementById('storage-input');
+    
+    if (wasteTypeInput && storageInput) {
+      const storageOptions = {
+        '混合废水W1_W2': ['储水罐 #1', '储水罐 #2'],
+        '脱脂废水': ['储水罐 #3'],
+        '含氰废水': ['储水罐 #4', '储水罐 #5'],
+        '酸洗废水': ['储水罐 #1', '储水罐 #5'],
+        '含铬废水': ['储水罐 #2', '储水罐 #3']
+      };
+      
+      wasteTypeInput.addEventListener('change', function() {
+        const wasteType = this.value;
+        
+        // 清空当前贮存设备选项
+        storageInput.innerHTML = '<option value="">请选择贮存设备</option>';
+        
+        // 如果选择了废物类型，加载对应的贮存设备选项
+        if (wasteType && storageOptions[wasteType]) {
+          storageOptions[wasteType].forEach(function(storage) {
+            const option = document.createElement('option');
+            option.value = storage;
+            option.textContent = storage;
+            storageInput.appendChild(option);
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html> 

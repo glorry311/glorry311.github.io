@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>联单 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode.js@1.0.0/qrcode.min.js"></script>
+  <style>
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .filter-tabs {
+      display: flex;
+      background-color: #f2f2f7;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    
+    .filter-tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #718096;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .filter-tab.active {
+      background-color: #3182ce;
+      color: white;
+    }
+    
+    .order-list {
+      margin-bottom: 80px;
+    }
+    
+    .order-item {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .order-company {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .company-name {
+      font-weight: 600;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+    }
+    
+    .order-number {
+      font-weight: 600;
+      font-size: 16px;
+      color: #2d3748;
+    }
+    
+    .order-status {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    
+    .status-created {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+    
+    .status-transporting {
+      background: #E0F2FE;
+      color: #0369A1;
+    }
+    
+    .status-completed {
+      background: #DCFCE7;
+      color: #166534;
+    }
+    
+    .order-content {
+      padding: 14px 16px;
+    }
+    
+    .order-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .order-label {
+      color: #718096;
+    }
+    
+    .order-value {
+      color: #2d3748;
+      font-weight: 500;
+    }
+    
+    .order-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 12px 16px;
+      border-top: 1px solid #f0f0f0;
+      gap: 10px;
+    }
+    
+    .order-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* 联单申报按钮样式 */
+    .report-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 16px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background-color: #3b82f6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      z-index: 1000;
+    }
+    
+    .report-btn:active {
+      transform: scale(0.9);
+    }
+    
+    /* 删除按钮 */
+    .delete-btn {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: white;
+    }
+    
+    /* 二维码按钮 */
+    .qrcode-btn {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+    }
+    
+    /* 申报模态框样式 */
+    .report-form {
+      width: 100%;
+    }
+    
+    .form-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      transition: all 0.2s ease;
+      margin-bottom: 16px;
+    }
+    
+    .form-select:focus {
+      outline: none;
+      border-color: #3182ce;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+    
+    /* 空状态 */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+      color: #a0aec0;
+    }
+    
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: #cbd5e0;
+    }
+    
+    .empty-text {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    /* 下拉刷新提示 */
+    .pull-to-refresh {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #3182ce;
+      font-size: 14px;
+      transition: transform 0.3s;
+    }
+    
+    .pull-to-refresh i {
+      margin-right: 8px;
+    }
+    
+    .refreshing .fa-arrow-down {
+      display: none;
+    }
+    
+    .refreshing .fa-spinner {
+      display: inline-block;
+    }
+    
+    .fa-spinner {
+      display: none;
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f1f5f9;
+      border: none;
+      color: #3182ce;
+      cursor: pointer;
+    }
+
+    .detail-btn:active {
+      background-color: #e2e8f0;
+    }
+
+    /* 运输单位扫描按钮 */
+    .scan-fab {
+      position: fixed;
+      bottom: 100px;
+      left: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: #3B82F6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      cursor: pointer;
+    }
+    
+    .scan-fab i {
+      font-size: 24px;
+    }
+    
+    .scan-fab:active {
+      transform: scale(0.95);
+    }
+
+    /* 审批按钮样式 */
+    .approve-btn {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    .reject-btn {
+      background-color: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    /* 确认按钮样式 */
+    .confirm-btn {
+      background-color: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 0;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+    }
+    
+    /* 悬浮按钮样式修复 */
+    .submit-fab {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background-color: #3b82f6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      z-index: 100;
+    }
+    
+    /* 退回理由模态框 */
+    .reason-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .reason-modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+    
+    .reason-modal-content {
+      width: 100%;
+      max-width: 320px;
+      background-color: white;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    
+    .reason-modal-header {
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .reason-modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+    }
+    
+    .reason-modal-body {
+      padding: 16px;
+    }
+    
+    .reason-textarea {
+      width: 100%;
+      height: 100px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      resize: none;
+    }
+    
+    .reason-modal-footer {
+      display: flex;
+      padding: 12px 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+    
+    .reason-modal-btn {
+      flex: 1;
+      padding: 8px 0;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    .reason-cancel-btn {
+      color: #6b7280;
+    }
+    
+    .reason-confirm-btn {
+      color: #3b82f6;
+    }
+
+    /* 底部标签栏样式 */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background-color: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #f0f0f0;
+      z-index: 50;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 页面头部 -->
+  <div class="page-header">
+    <div class="action-buttons left-buttons">
+      <!-- 占位，保持标题居中 -->
+    </div>
+    <div class="page-title">联单</div>
+    <div class="action-buttons">
+      <div class="share-dots">
+        <div class="share-dot"></div>
+        <div class="share-dot middle"></div>
+        <div class="share-dot"></div>
+      </div>
+      <div class="home-btn">
+        <div class="home-btn-inner"></div>
+        <div class="home-btn-outer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- 下拉刷新提示 -->
+    <div class="pull-to-refresh" id="pull-refresh">
+      <i class="fas fa-arrow-down"></i>
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>下拉刷新</span>
+    </div>
+    
+    <!-- 过滤条件 -->
+    <div class="filter-tabs">
+      <div class="filter-tab active" data-status="all">全部</div>
+      <div class="filter-tab" data-status="created">已创建</div>
+      <div class="filter-tab" data-status="transporting">运输中</div>
+      <div class="filter-tab" data-status="completed">已完成</div>
+    </div>
+    
+    <!-- 联单列表 -->
+    <div class="order-list" id="order-list">
+      <!-- 联单项 1 -->
+      <div class="order-item" data-status="created">
+        <div class="order-header">
+          <div class="order-number">联单号: WS20230501001</div>
+          <div class="order-status status-created">已创建</div>
+        </div>
+        <div class="order-company" onclick="location.href='transfer-detail.html?status=created'">
+          <div class="company-name">江阴环保科技有限公司</div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="order-content">
+          <div class="order-info">
+            <div class="order-label">废物名称</div>
+            <div class="order-value">混合废水W1_W2</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">申报时间</div>
+            <div class="order-value">2023-05-01 10:30</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">预估申报量</div>
+            <div class="order-value">50.00 吨</div>
+          </div>
+        </div>
+        <div class="order-footer">
+          <button class="order-btn delete-btn" data-order="WS20230501001">
+            <i class="fas fa-trash"></i>
+            <span>删除</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 联单项 2 -->
+      <div class="order-item" data-status="transporting">
+        <div class="order-header">
+          <div class="order-number">联单号: WS20230428002</div>
+          <div class="order-status status-transporting">运输中</div>
+        </div>
+        <div class="order-company" onclick="location.href='transfer-detail.html?status=transporting'">
+          <div class="company-name">江苏XX环保科技有限公司</div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="order-content">
+          <div class="order-info">
+            <div class="order-label">废物名称</div>
+            <div class="order-value">脱脂废水</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">申报时间</div>
+            <div class="order-value">2023-04-28 14:15</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">预估申报量</div>
+            <div class="order-value">20.50 吨</div>
+          </div>
+        </div>
+        <div class="order-footer">
+          <button class="order-btn qrcode-btn" data-order="WS20230428002">
+            <i class="fas fa-qrcode"></i>
+            <span>生成二维码</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 联单项 3 -->
+      <div class="order-item" data-status="completed">
+        <div class="order-header">
+          <div class="order-number">联单号: WS20230425003</div>
+          <div class="order-status status-completed">已完成</div>
+        </div>
+        <div class="order-company" onclick="location.href='transfer-detail.html?status=completed'">
+          <div class="company-name">江苏XX环保科技有限公司</div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="order-content">
+          <div class="order-info">
+            <div class="order-label">废物名称</div>
+            <div class="order-value">含氰废水</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">申报时间</div>
+            <div class="order-value">2023-04-25 09:20</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">预估申报量</div>
+            <div class="order-value">35.75 吨</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">实际重量</div>
+            <div class="order-value">36.20 吨</div>
+          </div>
+        </div>
+        <div class="order-footer">
+          <button class="order-btn btn-outline" onclick="location.href='transfer-detail.html?status=completed'">
+            <i class="fas fa-eye"></i>
+            <span>查看详情</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 联单项 4 -->
+      <div class="order-item" data-status="pending">
+        <div class="order-header">
+          <div class="order-number">联单号: WS20230502004</div>
+          <div class="order-status status-pending">待审批</div>
+        </div>
+        <div class="order-company" onclick="location.href='transfer-detail.html?status=pending'">
+          <div class="company-name">江阴环保科技有限公司</div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="order-content">
+          <div class="order-info">
+            <div class="order-label">废物名称</div>
+            <div class="order-value">含氰废水</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">申报时间</div>
+            <div class="order-value">2023-05-02 09:15</div>
+          </div>
+          <div class="order-info">
+            <div class="order-label">预估申报量</div>
+            <div class="order-value">35.50 吨</div>
+          </div>
+        </div>
+        <div class="order-footer">
+          <button class="order-btn btn-outline" onclick="location.href='transfer-detail.html?status=pending'">
+            <i class="fas fa-eye"></i>
+            <span>查看详情</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 空状态显示 -->
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <div class="empty-icon">
+          <i class="far fa-clipboard"></i>
+        </div>
+        <div class="empty-text">暂无联单记录</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 联单申报按钮 -->
+  <a href="#" class="report-btn" id="report-btn">
+    <i class="fas fa-plus"></i>
+  </a>
+  
+  <!-- 底部标签栏 -->
+  <div class="tab-bar">
+    <a href="home.html" class="tab-item">
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+    <a href="ledger.html" class="tab-item">
+      <i class="fas fa-book"></i>
+      <span>台账</span>
+    </a>
+    <a href="transfer.html" class="tab-item active">
+      <i class="fas fa-exchange-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="profile.html" class="tab-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <!-- 二维码模态框 -->
+  <div id="qrcode-modal" class="modal hidden">
+    <div class="modal-content" onclick="event.stopPropagation();">
+      <div class="modal-header">
+        联单二维码
+        <button class="modal-close-btn" id="close-qrcode-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="qrcode-container">
+          <div class="qrcode-title">联单号：<span id="qrcode-order-id">WS20230501001</span></div>
+          <div class="qrcode-subtitle">请向运输人员出示此二维码</div>
+          <div class="qrcode-canvas" id="qrcode"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary modal-btn" id="share-qrcode-btn">分享二维码</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 联单申报模态框 -->
+  <div id="report-modal" class="modal hidden">
+    <div class="modal-content" onclick="event.stopPropagation();">
+      <div class="modal-header">
+        联单申报
+        <button class="modal-close-btn" id="close-report-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="report-form">
+          <div class="form-group">
+            <label class="form-label">废物名称</label>
+            <select class="form-select" id="waste-type">
+              <option value="">请选择废物名称</option>
+              <option value="mixed">混合废水W1_W2</option>
+              <option value="degreasing">脱脂废水</option>
+              <option value="cyanide">含氰废水</option>
+              <option value="acid">酸洗废水</option>
+              <option value="chrome">含铬废水</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">预估申报量 (吨)</label>
+            <input type="number" class="form-control" id="waste-amount" placeholder="请输入预估申报量">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-btn" id="cancel-report-btn">取消</button>
+        <button class="btn btn-primary modal-btn" id="confirm-report-btn">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 产废单位提交模态框 -->
+  <div id="submit-waste-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>申报废水转移</h3>
+        <button id="close-submit-modal" class="close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="waste-type">废物名称</label>
+          <select id="waste-type" class="form-control">
+            <option value="">请选择废物类型</option>
+            <option value="mixed">混合废水W1_W2</option>
+            <option value="degreasing">脱脂废水</option>
+            <option value="cyanide">含氰废水</option>
+            <option value="acid">酸洗废水</option>
+            <option value="chrome">含铬废水</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="waste-amount">预估申报量(吨)</label>
+          <input type="number" id="waste-amount" class="form-control" min="0.1" step="0.1">
+        </div>
+        <div class="form-group">
+          <label for="transport-date">计划转运日期</label>
+          <input type="date" id="transport-date" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="transport-time">计划转运时间</label>
+          <input type="time" id="transport-time" class="form-control">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-submit" class="btn btn-secondary">取消</button>
+        <button id="confirm-submit" class="btn btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 退回理由模态框 -->
+  <div id="reject-reason-modal" class="modal hidden">
+    <div class="modal-content" onclick="event.stopPropagation();">
+      <div class="modal-header">
+        退回理由
+        <button class="modal-close-btn" id="close-reject-reason-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">请输入退回理由</label>
+          <textarea class="form-control" id="reject-reason" rows="4" placeholder="请在此输入退回的理由..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-btn" id="cancel-reject-btn">取消</button>
+        <button class="btn btn-primary modal-btn" id="confirm-reject-btn">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+      // 获取用户角色
+      const userRole = localStorage.getItem('userRole') || 'producer';
+      
+      // 根据用户角色显示不同内容
+      updateViewByRole(userRole);
+      
+      // 设置二维码按钮事件
+      setupQRCodeButtons();
+      
+      // 设置申报按钮事件 - 只为产废单位设置
+      if (userRole === 'producer') {
+        setupReportButtons();
+        
+        // 显示申报按钮
+        const reportBtn = document.getElementById('report-btn');
+        if (reportBtn) {
+          reportBtn.style.display = 'flex';
+        }
+      } else {
+        // 隐藏申报按钮
+        const reportBtn = document.getElementById('report-btn');
+        if (reportBtn) {
+          reportBtn.style.display = 'none';
+        }
+      }
+      
+      // 如果是收处单位，设置审批按钮事件
+      if (userRole === 'receiver') {
+        setupApprovalButtons();
+      }
+      
+      // 添加废水提交窗口关闭事件 - 对所有角色都设置，以确保关闭功能正常
+      setupSubmitWasteModal();
+    });
+
+    // 设置废水提交模态框事件
+    function setupSubmitWasteModal() {
+      const submitWasteModal = document.getElementById('submit-waste-modal');
+      const closeSubmitModalBtn = document.getElementById('close-submit-modal');
+      const cancelSubmitBtn = document.getElementById('cancel-submit');
+      const confirmSubmitBtn = document.getElementById('confirm-submit');
+      
+      // 关闭按钮事件
+      if (closeSubmitModalBtn) {
+        closeSubmitModalBtn.addEventListener('click', function() {
+          submitWasteModal.classList.add('hidden');
+        });
+      }
+      
+      // 取消按钮事件
+      if (cancelSubmitBtn) {
+        cancelSubmitBtn.addEventListener('click', function() {
+          submitWasteModal.classList.add('hidden');
+        });
+      }
+      
+      // 确认按钮事件
+      if (confirmSubmitBtn) {
+        confirmSubmitBtn.addEventListener('click', function() {
+          // 获取表单数据
+          const wasteType = document.getElementById('waste-type').value;
+          const wasteAmount = document.getElementById('waste-amount').value;
+          const transportDate = document.getElementById('transport-date').value;
+          const transportTime = document.getElementById('transport-time').value;
+          
+          // 简单验证
+          if (!wasteType || !wasteAmount || !transportDate || !transportTime) {
+            alert('请填写完整信息');
+            return;
+          }
+          
+          // 提交成功
+          alert('废水转移申报成功！');
+          
+          // 关闭模态框
+          submitWasteModal.classList.add('hidden');
+          
+          // 清空表单
+          document.getElementById('waste-type').value = '';
+          document.getElementById('waste-amount').value = '';
+          document.getElementById('transport-date').value = '';
+          document.getElementById('transport-time').value = '';
+        });
+      }
+      
+      // 点击模态框外部关闭
+      if (submitWasteModal) {
+        submitWasteModal.addEventListener('click', function(e) {
+          if (e.target === this) {
+            this.classList.add('hidden');
+          }
+        });
+      }
+    }
+
+    // 设置申报按钮事件
+    function setupReportButtons() {
+      const reportBtn = document.getElementById('report-btn');
+      const reportModal = document.getElementById('report-modal');
+      const closeReportBtn = document.getElementById('close-report-btn');
+      const cancelReportBtn = document.getElementById('cancel-report-btn');
+      const confirmReportBtn = document.getElementById('confirm-report-btn');
+      
+      // 申报按钮点击事件
+      if (reportBtn) {
+        reportBtn.addEventListener('click', function() {
+          // 检查用户角色是否为产废单位
+          const userRole = localStorage.getItem('userRole') || 'producer';
+          if (userRole === 'producer') {
+            // 显示废水提交模态框
+            const submitWasteModal = document.getElementById('submit-waste-modal');
+            if (submitWasteModal) {
+              submitWasteModal.classList.remove('hidden');
+            }
+          } else {
+            // 显示普通申报模态框
+            if (reportModal) {
+              reportModal.classList.remove('hidden');
+            }
+          }
+        });
+      }
+      
+      // 确认按钮事件
+      if (confirmReportBtn) {
+        confirmReportBtn.addEventListener('click', function() {
+          const wasteType = document.getElementById('waste-type').value;
+          const wasteAmount = document.getElementById('waste-amount').value;
+          
+          if (!wasteType || !wasteAmount) {
+            alert('请选择废物名称和输入申报量');
+            return;
+          }
+          
+          // 生成二维码
+          const orderNumber = 'WS' + new Date().getTime().toString().slice(-8);
+          const qrcodeModal = document.getElementById('qrcode-modal');
+          document.getElementById('qrcode-order-id').textContent = orderNumber;
+          
+          // 生成二维码
+          const qrcodeElement = document.getElementById('qrcode');
+          qrcodeElement.innerHTML = ''; // 清空之前的二维码
+          
+          // 使用QRCode.js库生成二维码
+          new QRCode(qrcodeElement, {
+            text: orderNumber,
+            width: 200,
+            height: 200,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+          
+          // 显示二维码模态框
+          qrcodeModal.classList.remove('hidden');
+          
+          // 关闭申报模态框
+          reportModal.classList.add('hidden');
+          
+          alert('联单申报成功！请出示二维码给运输人员');
+        });
+      }
+    }
+
+    // 设置审批按钮事件
+    function setupApprovalButtons() {
+      // 审批通过按钮
+      const approveButtons = document.querySelectorAll('.approve-btn');
+      approveButtons.forEach(button => {
+        let clickCount = 0;
+        let clickTimer = null;
+        
+        button.addEventListener('click', function(event) {
+          event.stopPropagation(); // 阻止事件冒泡
+          
+          clickCount++;
+          
+          if (clickCount === 1) {
+            // 第一次点击，显示确认提示
+            const originalText = this.textContent;
+            this.textContent = '再次点击确认审批';
+            
+            // 3秒后重置
+            clickTimer = setTimeout(() => {
+              this.textContent = originalText;
+              clickCount = 0;
+            }, 3000);
+          } else if (clickCount === 2) {
+            // 第二次点击，执行审批
+            clearTimeout(clickTimer);
+            const orderNumber = this.getAttribute('data-order');
+            alert(`已审批通过联单: ${orderNumber}`);
+            
+            // 更新订单状态为待接收
+            const orderItem = this.closest('.order-item');
+            orderItem.setAttribute('data-status', 'transporting');
+            
+            // 更新状态标签
+            const statusElement = orderItem.querySelector('.order-status');
+            statusElement.textContent = '待接收';
+            statusElement.className = 'order-status status-transporting';
+            
+            // 更新按钮组
+            const footerElement = orderItem.querySelector('.order-footer');
+            footerElement.innerHTML = `
+              <button class="order-btn btn-outline" onclick="location.href='transfer-detail.html?status=transporting'">
+                <i class="fas fa-eye"></i>
+                <span>查看详情</span>
+              </button>
+            `;
+            
+            // 重置点击计数
+            clickCount = 0;
+          }
+        });
+      });
+      
+      // 拒绝按钮
+      const rejectButtons = document.querySelectorAll('.reject-btn');
+      rejectButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+          event.stopPropagation(); // 阻止事件冒泡
+          
+          // 显示拒绝理由模态框
+          const reasonModal = document.getElementById('reject-reason-modal');
+          const orderNumber = this.getAttribute('data-order');
+          
+          // 记住当前订单项，用于稍后处理
+          const orderItem = this.closest('.order-item');
+          
+          // 显示模态框
+          reasonModal.classList.add('show');
+          
+          // 设置确认按钮事件
+          const confirmRejectBtn = reasonModal.querySelector('.reason-confirm-btn');
+          confirmRejectBtn.onclick = function() {
+            const reason = reasonModal.querySelector('.reason-textarea').value;
+            if (!reason.trim()) {
+              alert('请输入拒绝理由');
+              return;
+            }
+            
+            alert(`已拒绝联单: ${orderNumber}, 理由: ${reason}`);
+            
+            // 更新订单状态为已拒绝
+            orderItem.setAttribute('data-status', 'rejected');
+            
+            // 更新状态标签
+            const statusElement = orderItem.querySelector('.order-status');
+            statusElement.textContent = '已拒绝';
+            statusElement.className = 'order-status status-rejected';
+            
+            // 添加拒绝理由
+            const orderContent = orderItem.querySelector('.order-content');
+            const rejectReason = document.createElement('div');
+            rejectReason.className = 'reject-reason';
+            rejectReason.innerHTML = `
+              <div class="order-info">
+                <div class="order-label">拒绝理由</div>
+                <div class="order-value">${reason}</div>
+              </div>
+            `;
+            orderContent.appendChild(rejectReason);
+            
+            // 更新按钮组
+            const footerElement = orderItem.querySelector('.order-footer');
+            footerElement.innerHTML = `
+              <button class="order-btn btn-outline" onclick="location.href='transfer-detail.html?status=rejected'">
+                <i class="fas fa-eye"></i>
+                <span>查看详情</span>
+              </button>
+            `;
+            
+            // 关闭模态框
+            reasonModal.classList.remove('show');
+            
+            // 清空文本域
+            reasonModal.querySelector('.reason-textarea').value = '';
+          };
+          
+          // 设置取消按钮事件
+          const cancelRejectBtn = reasonModal.querySelector('.reason-cancel-btn');
+          cancelRejectBtn.onclick = function() {
+            reasonModal.classList.remove('show');
+            // 清空文本域
+            reasonModal.querySelector('.reason-textarea').value = '';
+          };
+        });
+      });
+    }
+
+    // 设置二维码按钮事件
+    function setupQRCodeButtons() {
+      const qrcodeButtons = document.querySelectorAll('.qrcode-btn');
+      qrcodeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const orderNumber = this.getAttribute('data-order');
+          const qrcodeModal = document.getElementById('qrcode-modal');
+          document.getElementById('qrcode-order-id').textContent = orderNumber;
+          
+          // 生成二维码
+          const qrcodeElement = document.getElementById('qrcode');
+          qrcodeElement.innerHTML = ''; // 清空之前的二维码
+          
+          // 使用QRCode.js库生成二维码
+          new QRCode(qrcodeElement, {
+            text: orderNumber,
+            width: 200,
+            height: 200,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+          
+          qrcodeModal.classList.remove('hidden');
+        });
+      });
+      
+      // 关闭二维码模态框
+      const closeQRCodeBtn = document.getElementById('close-qrcode-btn');
+      if (closeQRCodeBtn) {
+        closeQRCodeBtn.addEventListener('click', function() {
+          document.getElementById('qrcode-modal').classList.add('hidden');
+        });
+      }
+    }
+
+    // 根据用户角色更新视图
+    function updateViewByRole(role) {
+      const pageTitle = document.querySelector('.page-title');
+      const filterTabs = document.querySelector('.filter-tabs');
+      
+      if (role === 'receiver') {
+        // 收处单位视图
+        if (pageTitle) pageTitle.textContent = '接收联单';
+        
+        // 收处单位筛选标签
+        if (filterTabs) {
+          filterTabs.innerHTML = `
+            <div class="filter-tab active" data-status="all">全部</div>
+            <div class="filter-tab" data-status="pending">待审批</div>
+            <div class="filter-tab" data-status="transporting">运输中</div>
+            <div class="filter-tab" data-status="completed">已完成</div>
+          `;
+        }
+        
+        // 更新订单状态显示和按钮
+        document.querySelectorAll('.order-item[data-status="created"]').forEach(item => {
+          const statusElement = item.querySelector('.order-status');
+          statusElement.textContent = '待审批';
+          statusElement.className = 'order-status status-pending';
+          
+          const footerElement = item.querySelector('.order-footer');
+          footerElement.innerHTML = `
+            <button class="order-btn approve-btn" data-order="${item.querySelector('.order-number').textContent.split(': ')[1]}">
+              <i class="fas fa-check"></i>
+              <span>审批</span>
+            </button>
+            <button class="order-btn reject-btn" data-order="${item.querySelector('.order-number').textContent.split(': ')[1]}">
+              <i class="fas fa-times"></i>
+              <span>退回</span>
+            </button>
+          `;
+        });
+        
+        // 移除所有二维码按钮
+        document.querySelectorAll('.qrcode-btn').forEach(btn => btn.remove());
+        
+        // 设置筛选标签点击事件
+        setupFilterTabs();
+        
+      } else if (role === 'producer') {
+        // 产废单位视图
+        if (pageTitle) pageTitle.textContent = '转移联单';
+        
+        // 产废单位筛选标签
+        if (filterTabs) {
+          filterTabs.innerHTML = `
+            <div class="filter-tab active" data-status="all">全部</div>
+            <div class="filter-tab" data-status="created">已创建</div>
+            <div class="filter-tab" data-status="pending">待审批</div>
+            <div class="filter-tab" data-status="transporting">运输中</div>
+            <div class="filter-tab" data-status="completed">已完成</div>
+          `;
+        }
+        
+        // 设置筛选标签点击事件
+        setupFilterTabs();
+        
+        // 修复申报按钮位置
+        const reportBtn = document.getElementById('report-btn');
+        if (reportBtn) {
+          reportBtn.style.bottom = '100px'; // 调整位置，确保在手机屏幕范围内
+        }
+      } else if (role === 'transporter') {
+        // 运输单位视图
+        if (pageTitle) pageTitle.textContent = '运输联单';
+        
+        // 运输单位筛选标签
+        if (filterTabs) {
+          filterTabs.innerHTML = `
+            <div class="filter-tab active" data-status="waiting">等待运输</div>
+            <div class="filter-tab" data-status="transporting">运输中</div>
+            <div class="filter-tab" data-status="completed">已完成</div>
+          `;
+        }
+        
+        // 添加扫描按钮
+        if (!document.querySelector('.scan-fab')) {
+          const scanFab = document.createElement('div');
+          scanFab.className = 'scan-fab';
+          scanFab.innerHTML = '<i class="fas fa-qrcode"></i>';
+          document.body.appendChild(scanFab);
+          
+          scanFab.addEventListener('click', function() {
+            alert('启动扫描二维码功能');
+          });
+        }
+        
+        // 设置筛选标签点击事件
+        setupFilterTabs();
+        
+        // 更改底部标签栏，转到运输单位的布局
+        const tabBar = document.querySelector('.tab-bar');
+        if (tabBar) {
+          tabBar.innerHTML = `
+            <a href="transporter.html" class="tab-item active">
+              <i class="fas fa-file-alt"></i>
+              <span>联单</span>
+            </a>
+            <a href="transport-history.html" class="tab-item">
+              <i class="fas fa-history"></i>
+              <span>历史</span>
+            </a>
+            <a href="profile.html" class="tab-item">
+              <i class="fas fa-user"></i>
+              <span>我的</span>
+            </a>
+          `;
+        }
+        
+      }
+    }
+    
+    // 设置筛选标签点击事件
+    function setupFilterTabs() {
+      const filterTabs = document.querySelectorAll('.filter-tab');
+      
+      filterTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          // 移除所有激活状态
+          filterTabs.forEach(t => t.classList.remove('active'));
+          
+          // 添加当前激活状态
+          this.classList.add('active');
+          
+          // 过滤订单
+          const status = this.getAttribute('data-status');
+          
+          if (status === 'all') {
+            // 显示所有订单
+            document.querySelectorAll('.order-item').forEach(item => {
+              item.style.display = 'block';
+            });
+          } else {
+            // 只显示特定状态的订单
+            document.querySelectorAll('.order-item').forEach(item => {
+              if (item.getAttribute('data-status') === status) {
+                item.style.display = 'block';
+              } else {
+                item.style.display = 'none';
+              }
+            });
+          }
+          
+          // 检查是否有显示的订单
+          const hasVisibleItems = Array.from(document.querySelectorAll('.order-item')).some(item => 
+            item.style.display !== 'none'
+          );
+          
+          // 显示或隐藏空状态
+          document.getElementById('empty-state').style.display = hasVisibleItems ? 'none' : 'block';
+        });
+      });
+    }
+
+    // 设置退回按钮事件
+    function setupRejectButtons() {
+      const rejectButtons = document.querySelectorAll('.reject-btn');
+      const rejectReasonModal = document.getElementById('reject-reason-modal');
+      const closeRejectReasonBtn = document.getElementById('close-reject-reason-btn');
+      const cancelRejectBtn = document.getElementById('cancel-reject-btn');
+      const confirmRejectBtn = document.getElementById('confirm-reject-btn');
+      
+      rejectButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const orderNumber = this.getAttribute('data-order');
+          rejectReasonModal.classList.remove('hidden');
+          
+          // 存储当前订单号
+          rejectReasonModal.setAttribute('data-order', orderNumber);
+        });
+      });
+      
+      // 关闭按钮事件
+      if (closeRejectReasonBtn) {
+        closeRejectReasonBtn.addEventListener('click', function() {
+          rejectReasonModal.classList.add('hidden');
+          document.getElementById('reject-reason').value = '';
+        });
+      }
+      
+      // 取消按钮事件
+      if (cancelRejectBtn) {
+        cancelRejectBtn.addEventListener('click', function() {
+          rejectReasonModal.classList.add('hidden');
+          document.getElementById('reject-reason').value = '';
+        });
+      }
+      
+      // 确认按钮事件
+      if (confirmRejectBtn) {
+        confirmRejectBtn.addEventListener('click', function() {
+          const reason = document.getElementById('reject-reason').value.trim();
+          if (!reason) {
+            alert('请输入退回理由');
+            return;
+          }
+          
+          const orderNumber = rejectReasonModal.getAttribute('data-order');
+          alert(`已退回联单: ${orderNumber}\n退回理由: ${reason}`);
+          
+          // 关闭模态框
+          rejectReasonModal.classList.add('hidden');
+          document.getElementById('reject-reason').value = '';
+        });
+      }
+    }
+
+    // 在页面加载完成后设置退回按钮事件
+    document.addEventListener('DOMContentLoaded', function() {
+      const userRole = localStorage.getItem('userRole') || 'producer';
+      if (userRole === 'receiver') {
+        setupRejectButtons();
+      }
+    });
+
+    // 在JavaScript部分确保按钮位置正确
+    document.addEventListener('DOMContentLoaded', function() {
+      const reportBtn = document.querySelector('.report-btn');
+      if (reportBtn) {
+        reportBtn.style.position = 'fixed';
+        reportBtn.style.bottom = '100px';
+        reportBtn.style.right = '20px';
+        reportBtn.style.zIndex = '1000';
+      }
+    });
+  </script>
+</body>
+</html> 

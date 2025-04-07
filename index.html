@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>奕水盈集中式工业污水管理平台</title>
+  <link rel="stylesheet" href="common.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0 auto;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100%;
+      max-width: 393px;
+      background-color: #fff;
+      border-radius: 40px;
+    }
+    
+    .splash-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(160deg, #3182ce, #2b6cb0);
+      border-radius: calc(var(--border-radius) - var(--border-width));
+    }
+    
+    /* 背景波浪 */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="white" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,186.7C960,192,1056,224,1152,234.7C1248,245,1344,235,1392,229.3L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0.8;
+      animation: wave-animation 12s linear infinite;
+    }
+    
+    .wave:nth-child(2) {
+      bottom: -20px;
+      opacity: 0.4;
+      animation: wave-animation 10s linear infinite;
+    }
+    
+    @keyframes wave-animation {
+      0% { background-position-x: 0px; }
+      100% { background-position-x: 1000px; }
+    }
+    
+    /* 粒子动画 */
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: float 10s infinite linear;
+    }
+    
+    @keyframes float {
+      0% { transform: translate(0, 0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)); opacity: 0; }
+    }
+    
+    /* Logo和标题 */
+    .splash-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-top: 120px;
+      width: 100%;
+      padding: 0 24px;
+      z-index: 2;
+      box-sizing: border-box;
+    }
+    
+    .logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 30px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      margin-bottom: 24px;
+      animation: pulsate 2s infinite alternate;
+      overflow: hidden;
+    }
+    
+    @keyframes pulsate {
+      0% { transform: scale(1); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); }
+      100% { transform: scale(1.05); box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18); }
+    }
+    
+    .logo img {
+      width: 75%;
+      height: 75%;
+      object-fit: contain;
+    }
+    
+    .app-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 0 10px;
+      word-wrap: break-word;
+    }
+    
+    .app-subtitle {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 32px;
+      max-width: 90%;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+    
+    /* 底部按钮 */
+    .splash-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      width: 90%;
+      z-index: 2;
+      margin-bottom: 120px;
+    }
+    
+    .start-btn {
+      width: 100%;
+      padding: 16px;
+      background: #fff;
+      color: #3182ce;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .start-btn::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .start-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .start-btn:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    .splash-version {
+      margin-top: 16px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+    }
+    
+    /* iOS状态栏 */
+    .ios-status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      color: white;
+      padding: 5px 16px;
+      height: 44px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top-left-radius: calc(var(--border-radius) - var(--border-width));
+      border-top-right-radius: calc(var(--border-radius) - var(--border-width));
+    }
+    
+    /* 页面操作按钮 */
+    .action-buttons {
+      position: fixed;
+      top: 10px;
+      right: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1001;
+      color: white;
+    }
+    
+    /* 固定位置的操作按钮 */
+    .action-fixed {
+      position: fixed;
+      top: 10px;
+      right: 15px;
+      z-index: 1001;
+      color: white;
+    }
+    
+    .share-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    
+    .share-dot {
+      width: 4px;
+      height: 4px;
+      background-color: white;
+      border-radius: 50%;
+    }
+    
+    .home-btn {
+      width: 24px;
+      height: 24px;
+      position: relative;
+    }
+    
+    .home-btn-inner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid white;
+      border-radius: 3px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 页面头部操作按钮 -->
+  <div class="action-buttons action-fixed">
+    <div class="share-dots">
+      <div class="share-dot"></div>
+      <div class="share-dot middle"></div>
+      <div class="share-dot"></div>
+    </div>
+    <div class="home-btn">
+      <div class="home-btn-inner"></div>
+      <div class="home-btn-outer"></div>
+    </div>
+  </div>
+
+  <div class="splash-container">
+    <!-- 背景波浪 -->
+    <div class="wave"></div>
+    <div class="wave"></div>
+    
+    <!-- 动画粒子 -->
+    <div id="particles"></div>
+    
+    <!-- Logo和标题 -->
+    <div class="splash-content">
+      <div class="logo">
+        <img src="assets/logo.png" alt="奕水盈Logo">
+      </div>
+      <h1 class="app-name">奕水盈集中式工业污水管理平台</h1>
+      <p class="app-subtitle">专注工业污水无害化处理 | 构建污水资源循环体系</p>
+    </div>
+    
+    <!-- 底部按钮 -->
+    <div class="splash-buttons">
+      <button class="start-btn" id="enterButton">
+        <span>进入平台</span>
+      </button>
+      <div class="splash-version">版本 1.0.0</div>
+    </div>
+  </div>
+
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+    
+    // 创建动画粒子
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 30;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // 随机位置
+        const initialX = Math.random() * 100;
+        const initialY = Math.random() * 100;
+        particle.style.left = `${initialX}%`;
+        particle.style.top = `${initialY}%`;
+        
+        // 随机大小
+        const size = Math.random() * 5 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // 随机移动方向
+        const x = (Math.random() - 0.5) * 200;
+        const y = (Math.random() - 0.5) * 200;
+        particle.style.setProperty('--x', `${x}px`);
+        particle.style.setProperty('--y', `${y}px`);
+        
+        // 随机动画延迟
+        const delay = Math.random() * 5;
+        particle.style.animationDelay = `${delay}s`;
+        
+        // 随机动画持续时间
+        const duration = Math.random() * 20 + 10;
+        particle.style.animationDuration = `${duration}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    // 创建粒子
+    createParticles();
+    
+    // 点击进入按钮
+    document.getElementById('enterButton').addEventListener('click', function() {
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html> 

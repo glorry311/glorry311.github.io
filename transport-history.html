@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>历史记录 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .container {
+      padding: 90px 15px 70px;
+      height: 100%;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* 修复iOS状态栏和页面头部 */
+    .ios-status-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 5px 16px;
+      height: 44px;
+      background-color: white;
+    }
+
+    .page-header {
+      position: fixed;
+      top: 44px;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: white;
+      height: 44px;
+    }
+
+    /* 头部按钮样式 */
+    .action-buttons {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .left-buttons {
+      left: 16px;
+      right: auto;
+    }
+
+    .share-dots {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 24px;
+      margin-right: 10px;
+    }
+
+    .share-dot {
+      width: 4px;
+      height: 4px;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    .share-dot.middle {
+      width: 6px;
+      height: 6px;
+    }
+
+    .home-btn {
+      position: relative;
+      width: 24px;
+      height: 24px;
+    }
+
+    .home-btn-outer {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .home-btn-inner {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #000;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* 底部标签栏样式 */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 60px;
+      border-top: 1px solid #f0f0f0;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      height: 100%;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      padding: 8px 0;
+    }
+
+    .tab-item i {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .tab-item.active {
+      color: #3b82f6;
+    }
+    
+    /* 搜索栏样式 */
+    .search-bar {
+      display: flex;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    
+    .search-input {
+      flex: 1;
+      height: 40px;
+      border-radius: 20px;
+      border: none;
+      background-color: #f3f4f6;
+      padding: 0 16px 0 40px;
+      font-size: 14px;
+      color: #4b5563;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 14px;
+    }
+    
+    /* 时间筛选器样式 */
+    .date-filter {
+      display: flex;
+      margin-bottom: 16px;
+      gap: 8px;
+    }
+    
+    .date-select {
+      flex: 1;
+      background-color: #f3f4f6;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #4b5563;
+      border: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+      padding-right: 30px;
+    }
+    
+    /* 历史订单卡片样式 */
+    .history-list {
+      margin-bottom: 24px;
+    }
+    
+    .history-item {
+      background-color: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+    
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .history-number {
+      font-size: 14px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+    
+    .history-date {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    
+    .history-body {
+      padding: 12px 16px;
+    }
+    
+    .company-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    
+    .waste-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .waste-type {
+      font-size: 14px;
+      color: #4b5563;
+    }
+    
+    .waste-amount {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1f2937;
+    }
+    
+    .transport-time {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+    
+    .complete-time {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    
+    .history-footer {
+      display: flex;
+      padding: 12px 16px;
+      background-color: #f9fafb;
+      border-top: 1px solid #f3f4f6;
+    }
+    
+    .history-footer button {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .detail-btn {
+      background-color: #f3f4f6;
+      color: #4b5563;
+    }
+    
+    /* 统计卡片样式 */
+    .stats-card {
+      background-color: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .stats-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .stats-select {
+      background-color: #f3f4f6;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #4b5563;
+      border: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 12px;
+      padding-right: 28px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .stat-item {
+      background-color: #f9fafb;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    
+    /* 分页控件样式 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .page-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 4px;
+      font-size: 14px;
+      color: #4b5563;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .page-btn.active {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .page-arrow {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 4px;
+      color: #6b7280;
+      background-color: #f3f4f6;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .page-arrow:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 页面头部 -->
+  <div class="page-header">
+    <div class="page-title">历史记录</div>
+    <div class="action-buttons">
+      <div class="share-dots">
+        <div class="share-dot"></div>
+        <div class="share-dot middle"></div>
+        <div class="share-dot"></div>
+      </div>
+      <div class="home-btn">
+        <div class="home-btn-inner"></div>
+        <div class="home-btn-outer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- 搜索栏 -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-input" placeholder="搜索联单号或企业名称">
+    </div>
+    
+    <!-- 时间筛选 -->
+    <div class="date-filter">
+      <select class="date-select" id="year-select">
+        <option value="all">全部年份</option>
+        <option value="2023" selected>2023年</option>
+        <option value="2022">2022年</option>
+      </select>
+      <select class="date-select" id="month-select">
+        <option value="all">全部月份</option>
+        <option value="5" selected>5月</option>
+        <option value="4">4月</option>
+        <option value="3">3月</option>
+      </select>
+    </div>
+    
+    <!-- 月度统计卡片 -->
+    <div class="stats-card">
+      <div class="stats-header">
+        <div class="stats-title">2023年5月统计</div>
+        <select class="stats-select">
+          <option value="month">月度</option>
+          <option value="quarter">季度</option>
+          <option value="year">年度</option>
+        </select>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">65.5</div>
+          <div class="stat-label">运输总量(吨)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">12</div>
+          <div class="stat-label">运输次数</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 历史订单列表 -->
+    <div class="history-list">
+      <div class="history-item">
+        <div class="history-header">
+          <div class="history-number">联单号: W20230425001</div>
+          <div class="history-date">2023-04-25</div>
+        </div>
+        <div class="history-body">
+          <div class="company-name">江阴市XX电镀有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">电镀废水</span>
+            <span class="waste-amount">3.5吨</span>
+          </div>
+          <div class="transport-time">开始时间: 2023-04-25 09:30</div>
+          <div class="complete-time">完成时间: 2023-04-25 11:45</div>
+        </div>
+        <div class="history-footer">
+          <button class="detail-btn">查看详情</button>
+        </div>
+      </div>
+      
+      <div class="history-item">
+        <div class="history-header">
+          <div class="history-number">联单号: W20230423002</div>
+          <div class="history-date">2023-04-23</div>
+        </div>
+        <div class="history-body">
+          <div class="company-name">无锡市YY金属制品有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">酸洗废水</span>
+            <span class="waste-amount">4吨</span>
+          </div>
+          <div class="transport-time">开始时间: 2023-04-23 14:15</div>
+          <div class="complete-time">完成时间: 2023-04-23 16:30</div>
+        </div>
+        <div class="history-footer">
+          <button class="detail-btn">查看详情</button>
+        </div>
+      </div>
+      
+      <div class="history-item">
+        <div class="history-header">
+          <div class="history-number">联单号: W20230420003</div>
+          <div class="history-date">2023-04-20</div>
+        </div>
+        <div class="history-body">
+          <div class="company-name">江阴市XX电镀有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">含铬废水</span>
+            <span class="waste-amount">2吨</span>
+          </div>
+          <div class="transport-time">开始时间: 2023-04-20 10:00</div>
+          <div class="complete-time">完成时间: 2023-04-20 12:15</div>
+        </div>
+        <div class="history-footer">
+          <button class="detail-btn">查看详情</button>
+        </div>
+      </div>
+      
+      <div class="history-item">
+        <div class="history-header">
+          <div class="history-number">联单号: W20230418004</div>
+          <div class="history-date">2023-04-18</div>
+        </div>
+        <div class="history-body">
+          <div class="company-name">江阴市XX电镀有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">脱脂废水</span>
+            <span class="waste-amount">3吨</span>
+          </div>
+          <div class="transport-time">开始时间: 2023-04-18 09:45</div>
+          <div class="complete-time">完成时间: 2023-04-18 11:30</div>
+        </div>
+        <div class="history-footer">
+          <button class="detail-btn">查看详情</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 分页控件 -->
+    <div class="pagination">
+      <button class="page-arrow" disabled>
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- 底部标签栏 -->
+  <div class="tab-bar">
+    <a href="transfer.html" class="tab-item">
+      <i class="fas fa-file-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="transport-history.html" class="tab-item active">
+      <i class="fas fa-history"></i>
+      <span>历史</span>
+    </a>
+    <a href="profile.html" class="tab-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // 检查用户角色，确保是运输单位
+      const userRole = localStorage.getItem('userRole') || 'transporter';
+      if (userRole !== 'transporter') {
+        localStorage.setItem('userRole', 'transporter');
+      }
+      
+      // 年份选择变化事件
+      const yearSelect = document.getElementById('year-select');
+      if (yearSelect) {
+        yearSelect.addEventListener('change', function() {
+          updateStatistics();
+          filterHistory();
+        });
+      }
+      
+      // 月份选择变化事件
+      const monthSelect = document.getElementById('month-select');
+      if (monthSelect) {
+        monthSelect.addEventListener('change', function() {
+          updateStatistics();
+          filterHistory();
+        });
+      }
+      
+      // 搜索输入事件
+      const searchInput = document.querySelector('.search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          filterHistory();
+        });
+      }
+      
+      // 统计类型变化事件
+      const statsSelect = document.querySelector('.stats-select');
+      if (statsSelect) {
+        statsSelect.addEventListener('change', function() {
+          updateStatistics();
+        });
+      }
+      
+      // 详情按钮点击事件
+      const detailButtons = document.querySelectorAll('.detail-btn');
+      detailButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const historyItem = this.closest('.history-item');
+          const orderNumber = historyItem.querySelector('.history-number').textContent.replace('联单号: ', '');
+          
+          // 跳转到详情页
+          window.location.href = 'transfer-detail.html?order=' + orderNumber;
+        });
+      });
+      
+      // 分页按钮点击事件
+      const pageButtons = document.querySelectorAll('.page-btn');
+      pageButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // 移除所有激活状态
+          pageButtons.forEach(btn => btn.classList.remove('active'));
+          // 添加当前激活状态
+          this.classList.add('active');
+          
+          // 加载对应页的数据（实际项目中可通过API获取）
+          // 这里仅作为示例
+          if (this.textContent !== '1') {
+            alert('加载第 ' + this.textContent + ' 页数据');
+          }
+        });
+      });
+      
+      // 更新统计信息
+      function updateStatistics() {
+        const year = yearSelect.value;
+        const month = monthSelect.value;
+        const statsType = statsSelect.value;
+        
+        // 更新统计标题
+        const statsTitle = document.querySelector('.stats-title');
+        if (statsTitle) {
+          if (statsType === 'month' && month !== 'all') {
+            statsTitle.textContent = `${year}年${month}月统计`;
+          } else if (statsType === 'quarter') {
+            const quarter = Math.ceil(parseInt(month) / 3);
+            statsTitle.textContent = `${year}年第${quarter}季度统计`;
+          } else if (statsType === 'year' || month === 'all') {
+            statsTitle.textContent = `${year}年统计`;
+          }
+        }
+        
+        // 更新统计数据
+        // 实际项目中可根据选择的时间段从API获取数据
+        // 这里仅为示例固定数据
+        const statValues = document.querySelectorAll('.stat-value');
+        if (statValues.length >= 2) {
+          if (statsType === 'month') {
+            statValues[0].textContent = '65.5';
+            statValues[1].textContent = '12';
+          } else if (statsType === 'quarter') {
+            statValues[0].textContent = '185.0';
+            statValues[1].textContent = '32';
+          } else {
+            statValues[0].textContent = '562.5';
+            statValues[1].textContent = '98';
+          }
+        }
+      }
+      
+      // 根据筛选条件过滤历史记录
+      function filterHistory() {
+        const year = yearSelect.value;
+        const month = monthSelect.value;
+        const searchText = searchInput.value.toLowerCase();
+        
+        const historyItems = document.querySelectorAll('.history-item');
+        historyItems.forEach(item => {
+          const historyDate = item.querySelector('.history-date').textContent;
+          const orderNumber = item.querySelector('.history-number').textContent;
+          const companyName = item.querySelector('.company-name').textContent;
+          
+          // 提取日期的年和月
+          const itemYear = historyDate.split('-')[0];
+          const itemMonth = historyDate.split('-')[1];
+          
+          // 检查是否符合年份筛选
+          const yearMatch = year === 'all' || itemYear === year;
+          
+          // 检查是否符合月份筛选
+          const monthMatch = month === 'all' || itemMonth === month;
+          
+          // 检查是否符合搜索条件
+          const searchMatch = searchText === '' || 
+                              orderNumber.toLowerCase().includes(searchText) || 
+                              companyName.toLowerCase().includes(searchText);
+          
+          // 决定是否显示该条目
+          if (yearMatch && monthMatch && searchMatch) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html> 

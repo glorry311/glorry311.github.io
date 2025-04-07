@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>登录 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f8f9fa;
+      height: 100vh;
+      position: relative;
+    }
+    
+    .login-container {
+      max-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+      padding: 60px 20px 30px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      height: 100%;
+    }
+    
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+      margin-top: 30px;
+    }
+    
+    .logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      object-fit: cover;
+    }
+    
+    .logo-text {
+      font-size: 22px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 6px;
+    }
+    
+    .logo-slogan {
+      font-size: 14px;
+      color: #718096;
+    }
+    
+    .form-container {
+      background-color: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+    }
+    
+    .login-heading {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #2d3748;
+      text-align: center;
+    }
+    
+    .input-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      color: #4a5568;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .input-icon {
+      position: absolute;
+      top: 40px;
+      left: 16px;
+      color: #a0aec0;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px 12px 12px 44px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #2d3748;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    
+    .form-input:focus {
+      border-color: #3182ce;
+      outline: none;
+    }
+    
+    .login-btn {
+      background: linear-gradient(135deg, #3182ce, #4299e1);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: transform 0.2s;
+    }
+    
+    .login-btn:active {
+      transform: scale(0.98);
+    }
+    
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+      color: #4a5568;
+    }
+    
+    .remember-checkbox {
+      margin-right: 8px;
+    }
+    
+    .forgot-password {
+      color: #3182ce;
+      text-decoration: none;
+    }
+    
+    .role-selection {
+      margin-bottom: 20px;
+    }
+    
+    .role-title {
+      text-align: center;
+      font-size: 14px;
+      color: #4a5568;
+      margin-bottom: 12px;
+    }
+    
+    .role-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    
+    .role-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background-color: white;
+      font-size: 14px;
+      color: #4a5568;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    
+    .role-btn.active {
+      background-color: #ebf8ff;
+      border-color: #3182ce;
+      color: #3182ce;
+    }
+    
+    .role-btn i {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+    
+    .signup-section {
+      text-align: center;
+      margin-top: auto;
+      padding: 16px 0;
+    }
+    
+    .signup-text {
+      font-size: 14px;
+      color: #718096;
+    }
+    
+    .signup-link {
+      color: #3182ce;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    /* 覆盖默认样式，防止内容被系统栏遮挡 */
+    .ios-status-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <div class="login-container">
+    <!-- Logo部分 -->
+    <div class="logo-container">
+      <img src="assets/logo.png" alt="奕水盈污水管理平台" class="logo">
+      <div class="logo-text">奕水盈</div>
+      <div class="logo-slogan">集中式工业污水管理平台</div>
+    </div>
+    
+    <!-- 角色选择 -->
+    <div class="role-selection">
+      <div class="role-title">请选择登录角色</div>
+      <div class="role-buttons">
+        <div class="role-btn active" data-role="producer">
+          <i class="fas fa-industry"></i>
+          产废单位
+        </div>
+        <div class="role-btn" data-role="transporter">
+          <i class="fas fa-truck"></i>
+          运输单位
+        </div>
+        <div class="role-btn" data-role="receiver">
+          <i class="fas fa-recycle"></i>
+          收处单位
+        </div>
+      </div>
+    </div>
+    
+    <!-- 登录表单 -->
+    <div class="form-container">
+      <div class="login-heading">账号登录</div>
+      
+      <div class="input-group">
+        <label for="username">用户名</label>
+        <i class="fas fa-user input-icon"></i>
+        <input type="text" id="username" class="form-input" placeholder="请输入用户名">
+      </div>
+      
+      <div class="input-group">
+        <label for="password">密码</label>
+        <i class="fas fa-lock input-icon"></i>
+        <input type="password" id="password" class="form-input" placeholder="请输入密码">
+      </div>
+      
+      <div class="remember-forgot">
+        <label class="remember-me">
+          <input type="checkbox" class="remember-checkbox">
+          记住我
+        </label>
+        <a href="#" class="forgot-password">忘记密码?</a>
+      </div>
+      
+      <button class="login-btn" id="login-btn">登录</button>
+    </div>
+    
+    <!-- 注册链接 -->
+    <div class="signup-section">
+      <div class="signup-text">
+        还没有账号? <a href="#" class="signup-link">立即注册</a>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+    
+    // 角色选择功能
+    document.querySelectorAll('.role-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // 移除所有active类
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        
+        // 为当前点击按钮添加active类
+        this.classList.add('active');
+      });
+    });
+    
+    // 登录按钮点击事件
+    document.getElementById('login-btn').addEventListener('click', function() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      
+      // 简单验证
+      if (username === '') {
+        alert('请输入用户名');
+        return;
+      }
+      
+      if (password === '') {
+        alert('请输入密码');
+        return;
+      }
+      
+      // 获取选中的角色
+      const activeRole = document.querySelector('.role-btn.active').getAttribute('data-role');
+      
+      // 存储角色信息到本地存储，供其他页面使用
+      localStorage.setItem('userRole', activeRole);
+      
+      // 根据角色跳转到不同页面
+      if (activeRole === 'transporter') {
+        // 运输单位直接跳转到transporter.html
+        window.location.href = "transporter.html";
+      } else {
+        // 其他角色跳转到首页
+        window.location.href = "home.html";
+      }
+    });
+  </script>
+</body>
+</html> 

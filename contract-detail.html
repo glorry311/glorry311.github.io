@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>合同详情 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="common.css" rel="stylesheet">
+  <style>
+    .detail-section {
+      background-color: white;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .detail-header {
+      padding: 12px 16px;
+      background-color: #f8f9fa;
+      font-weight: 600;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .detail-content {
+      padding: 16px;
+    }
+    
+    .detail-row {
+      display: flex;
+      margin-bottom: 12px;
+    }
+    
+    .detail-row:last-child {
+      margin-bottom: 0;
+    }
+    
+    .detail-label {
+      width: 120px;
+      color: #8e8e93;
+      font-size: 14px;
+    }
+    
+    .detail-value {
+      flex: 1;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status-active {
+      background-color: #e3f9e5;
+      color: #1b873d;
+    }
+    
+    .status-terminated {
+      background-color: #fee2e2;
+      color: #dc2626;
+    }
+    
+    /* 添加样式以确保最近转移可以完全显示并滚动 */
+    .recent-transfers-container {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-bottom: 8px;
+    }
+    
+    .recent-transfers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .transfer-item {
+      background-color: white;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .transfer-info {
+      flex: 1;
+    }
+    
+    .transfer-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    
+    .transfer-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #8e8e93;
+      font-size: 14px;
+    }
+    
+    .transfer-amount {
+      font-weight: 600;
+      font-size: 18px;
+      color: #007aff;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS 状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time">9:41 AM</div>
+    <div class="page-title">合同详情</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 主内容 -->
+  <div class="container pb-24">
+    <!-- 合同基础信息 -->
+    <div class="section-card mb-4">
+      <div class="section-header">
+        <h2 class="section-title">合同基础信息</h2>
+      </div>
+      <div class="detail-content">
+        <div class="detail-row">
+          <span class="detail-label">合同编号</span>
+          <span class="detail-value">JSC-2023-06-001</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">合同名称</span>
+          <span class="detail-value">2023年度污水处理协议</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">签订日期</span>
+          <span class="detail-value">2023-06-01</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">有效期至</span>
+          <span class="detail-value">2024-05-31</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">合同状态</span>
+          <span class="detail-value">
+            <span class="status-badge status-active">有效</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 收费计算方式 -->
+    <div class="section-card mb-4">
+      <div class="section-header">
+        <h2 class="section-title">收费计算方式</h2>
+      </div>
+      <div class="detail-content">
+        <div class="detail-row flex-col items-start">
+          <span class="detail-label mb-2">计费规则</span>
+          <div class="fee-rule-table w-full">
+            <div class="fee-rule-header">
+              <div class="fee-rule-cell">废水类型</div>
+              <div class="fee-rule-cell">处理价格 (元/吨)</div>
+            </div>
+            <div class="fee-rule-row">
+              <div class="fee-rule-cell">混合废水W1_W2</div>
+              <div class="fee-rule-cell">180.00</div>
+            </div>
+            <div class="fee-rule-row">
+              <div class="fee-rule-cell">脱脂废水</div>
+              <div class="fee-rule-cell">150.00</div>
+            </div>
+            <div class="fee-rule-row">
+              <div class="fee-rule-cell">含氰废水</div>
+              <div class="fee-rule-cell">260.00</div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">结算周期</span>
+          <span class="detail-value">月结</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">支付方式</span>
+          <span class="detail-value">银行转账</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 最近转移 (修改为可以滚动的容器) -->
+    <div class="section-card mb-4">
+      <div class="section-header">
+        <h2 class="section-title">最近转移</h2>
+      </div>
+      <div class="recent-transfers-container">
+        <div class="recent-transfers">
+          <div class="transfer-item">
+            <div class="transfer-info">
+              <div class="transfer-title">混合废水W1_W2</div>
+              <div class="transfer-meta">
+                <span class="transfer-date">2023-06-20</span>
+                <span class="transfer-id">#20230048</span>
+                <span class="status-badge status-completed">已完成</span>
+              </div>
+            </div>
+            <div class="transfer-amount">120.00吨</div>
+          </div>
+          
+          <div class="transfer-item">
+            <div class="transfer-info">
+              <div class="transfer-title">脱脂废水</div>
+              <div class="transfer-meta">
+                <span class="transfer-date">2023-06-15</span>
+                <span class="transfer-id">#20230039</span>
+                <span class="status-badge status-active">运输中</span>
+              </div>
+            </div>
+            <div class="transfer-amount">85.00吨</div>
+          </div>
+          
+          <div class="transfer-item">
+            <div class="transfer-info">
+              <div class="transfer-title">含氰废水</div>
+              <div class="transfer-meta">
+                <span class="transfer-date">2023-06-10</span>
+                <span class="transfer-id">#20230027</span>
+                <span class="status-badge status-completed">已完成</span>
+              </div>
+            </div>
+            <div class="transfer-amount">95.00吨</div>
+          </div>
+          
+          <div class="transfer-item">
+            <div class="transfer-info">
+              <div class="transfer-title">混合废水W1_W2</div>
+              <div class="transfer-meta">
+                <span class="transfer-date">2023-06-05</span>
+                <span class="transfer-id">#20230018</span>
+                <span class="status-badge status-completed">已完成</span>
+              </div>
+            </div>
+            <div class="transfer-amount">110.00吨</div>
+          </div>
+          
+          <div class="transfer-item">
+            <div class="transfer-info">
+              <div class="transfer-title">脱脂废水</div>
+              <div class="transfer-meta">
+                <span class="transfer-date">2023-05-28</span>
+                <span class="transfer-id">#20230010</span>
+                <span class="status-badge status-completed">已完成</span>
+              </div>
+            </div>
+            <div class="transfer-amount">90.00吨</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 合同附件 -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">合同附件</h2>
+      </div>
+      <div class="attachments-list">
+        <div class="attachment-item">
+          <div class="attachment-icon">
+            <i class="fas fa-file-pdf"></i>
+          </div>
+          <div class="attachment-info">
+            <div class="attachment-name">2023年度污水处理协议.pdf</div>
+            <div class="attachment-size">2.4 MB</div>
+          </div>
+          <div class="attachment-action">
+            <button class="btn-view">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="attachment-item">
+          <div class="attachment-icon">
+            <i class="fas fa-file-image"></i>
+          </div>
+          <div class="attachment-info">
+            <div class="attachment-name">特许经营许可证.jpg</div>
+            <div class="attachment-size">1.1 MB</div>
+          </div>
+          <div class="attachment-action">
+            <button class="btn-view">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="attachment-item">
+          <div class="attachment-icon">
+            <i class="fas fa-file-excel"></i>
+          </div>
+          <div class="attachment-info">
+            <div class="attachment-name">废水处理价格表.xlsx</div>
+            <div class="attachment-size">0.5 MB</div>
+          </div>
+          <div class="attachment-action">
+            <button class="btn-view">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 微信分享模态框 -->
+  <div id="share-modal" class="modal hidden">
+    <div class="modal-content" onclick="event.stopPropagation();">
+      <div class="modal-header">
+        分享
+        <button class="modal-close-btn" id="close-share-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="share-options grid grid-cols-4 gap-4">
+          <div class="share-option text-center">
+            <div class="share-icon bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+              <i class="fab fa-weixin text-xl"></i>
+            </div>
+            <div class="text-sm mt-2">微信好友</div>
+          </div>
+          <div class="share-option text-center">
+            <div class="share-icon bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+              <i class="fas fa-users text-xl"></i>
+            </div>
+            <div class="text-sm mt-2">朋友圈</div>
+          </div>
+          <div class="share-option text-center">
+            <div class="share-icon bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+              <i class="fab fa-qq text-xl"></i>
+            </div>
+            <div class="text-sm mt-2">QQ</div>
+          </div>
+          <div class="share-option text-center">
+            <div class="share-icon bg-blue-400 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+              <i class="fas fa-link text-xl"></i>
+            </div>
+            <div class="text-sm mt-2">复制链接</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 返回按钮 -->
+  <a href="contract-list.html" class="fixed left-4 top-16 p-2 rounded-full bg-gray-100">
+    <i class="fas fa-arrow-left text-gray-600"></i>
+  </a>
+  
+  <!-- 底部导航栏 -->
+  <div class="tab-bar">
+    <a href="home.html" class="tab-item">
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+    <a href="ledger.html" class="tab-item">
+      <i class="fas fa-book"></i>
+      <span>台账</span>
+    </a>
+    <a href="transfer.html" class="tab-item">
+      <i class="fas fa-file-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="profile.html" class="tab-item active">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+
+  <script>
+    // 分享按钮功能
+    document.getElementById('share-btn').addEventListener('click', function() {
+      document.getElementById('share-modal').classList.remove('hidden');
+    });
+    
+    // 关闭分享模态框
+    function closeShareModal() {
+      document.getElementById('share-modal').classList.add('hidden');
+    }
+    
+    // 分享模态框事件
+    document.getElementById('close-share-btn').addEventListener('click', closeShareModal);
+    
+    // 给整个share-modal添加点击事件，用于关闭
+    document.getElementById('share-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeShareModal();
+      }
+    });
+    
+    // 返回桌面按钮
+    document.getElementById('home-btn').addEventListener('click', function() {
+      // 在实际的小程序开发中，应该调用对应的API
+      alert('返回手机桌面');
+    });
+    
+    // 附件查看按钮
+    document.querySelectorAll('.btn-view').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const attachmentName = this.closest('.attachment-item').querySelector('.attachment-name').textContent;
+        alert(`查看附件: ${attachmentName}`);
+      });
+    });
+  </script>
+</body>
+</html> 

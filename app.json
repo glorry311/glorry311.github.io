@@ -1,0 +1,51 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/ledger/ledger",
+    "pages/transfer/transfer",
+    "pages/profile/profile",
+    "pages/transfer/detail",
+    "pages/contract/list",
+    "pages/contract/detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "奕水盈集中式工业污水管理平台",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1296db",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/images/home.png",
+        "selectedIconPath": "assets/images/home-active.png"
+      },
+      {
+        "pagePath": "pages/ledger/ledger",
+        "text": "台账",
+        "iconPath": "assets/images/ledger.png",
+        "selectedIconPath": "assets/images/ledger-active.png"
+      },
+      {
+        "pagePath": "pages/transfer/transfer",
+        "text": "联单",
+        "iconPath": "assets/images/transfer.png",
+        "selectedIconPath": "assets/images/transfer-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/images/profile.png",
+        "selectedIconPath": "assets/images/profile-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+} 

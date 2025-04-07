@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>运输联单 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .container {
+      padding: 90px 15px 70px;
+      height: 100%;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* 修复iOS状态栏和页面头部 */
+    .ios-status-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 5px 16px;
+      height: 44px;
+      background-color: white;
+    }
+
+    .page-header {
+      position: fixed;
+      top: 44px;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: white;
+      height: 44px;
+    }
+
+    /* 头部按钮样式 */
+    .action-buttons {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .left-buttons {
+      left: 16px;
+      right: auto;
+    }
+
+    .share-dots {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 24px;
+      margin-right: 10px;
+    }
+
+    .share-dot {
+      width: 4px;
+      height: 4px;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    .share-dot.middle {
+      width: 6px;
+      height: 6px;
+    }
+
+    .home-btn {
+      position: relative;
+      width: 24px;
+      height: 24px;
+    }
+
+    .home-btn-outer {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .home-btn-inner {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #000;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* 底部标签栏样式 */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-width: 393px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 60px;
+      border-top: 1px solid #f0f0f0;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      height: 100%;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      padding: 8px 0;
+    }
+
+    .tab-item i {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .tab-item.active {
+      color: #3b82f6;
+    }
+    
+    /* 筛选栏样式 */
+    .filter-bar {
+      display: flex;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #f3f4f6;
+      padding: 4px;
+    }
+    
+    .filter-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-tab.active {
+      background-color: white;
+      color: #3b82f6;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    /* 统计卡片样式 */
+    .stats-card {
+      background-color: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .stat-item {
+      background-color: #f9fafb;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    
+    /* 订单卡片样式 */
+    .order-list {
+      margin-bottom: 24px;
+    }
+    
+    .order-item {
+      background-color: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+    
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .order-number {
+      font-size: 14px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+    
+    .order-status {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .order-status.waiting {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+    
+    .order-status.transporting {
+      background-color: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    
+    .order-status.completed {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+    
+    .order-body {
+      padding: 12px 16px;
+    }
+    
+    .company-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    
+    .waste-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .waste-type {
+      font-size: 14px;
+      color: #4b5563;
+    }
+    
+    .waste-amount {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1f2937;
+    }
+    
+    .transport-time {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    
+    .order-footer {
+      display: flex;
+      padding: 12px 16px;
+      background-color: #f9fafb;
+      border-top: 1px solid #f3f4f6;
+    }
+    
+    .order-footer button {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .start-transport-btn {
+      background-color: #3b82f6;
+      color: white;
+      margin-right: 12px;
+    }
+    
+    .arrive-btn {
+      background-color: #10b981;
+      color: white;
+      margin-right: 12px;
+    }
+    
+    .scan-qr-btn {
+      background-color: #f59e0b;
+      color: white;
+      margin-right: 12px;
+    }
+    
+    .order-detail-btn {
+      background-color: #f3f4f6;
+      color: #4b5563;
+    }
+    
+    /* 扫描按钮样式 */
+    .scan-fab {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background-color: #3b82f6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+      z-index: 30;
+    }
+    
+    /* 扫描模态框样式 */
+    .scan-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .scan-modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+    
+    .scan-box {
+      width: 300px;
+      height: 300px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+    
+    .scan-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 2px solid white;
+      border-radius: 16px;
+    }
+    
+    .scan-corners::before,
+    .scan-corners::after,
+    .scan-corners span::before,
+    .scan-corners span::after {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: #3b82f6;
+    }
+    
+    .scan-corners::before {
+      top: 0;
+      left: 0;
+      border-top: 2px solid;
+      border-left: 2px solid;
+      border-top-left-radius: 12px;
+    }
+    
+    .scan-corners::after {
+      top: 0;
+      right: 0;
+      border-top: 2px solid;
+      border-right: 2px solid;
+      border-top-right-radius: 12px;
+    }
+    
+    .scan-corners span::before {
+      bottom: 0;
+      left: 0;
+      border-bottom: 2px solid;
+      border-left: 2px solid;
+      border-bottom-left-radius: 12px;
+    }
+    
+    .scan-corners span::after {
+      bottom: 0;
+      right: 0;
+      border-bottom: 2px solid;
+      border-right: 2px solid;
+      border-bottom-right-radius: 12px;
+    }
+    
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #3b82f6;
+      box-shadow: 0 0 8px 2px rgba(59, 130, 246, 0.6);
+      animation: scanLine 2s linear infinite;
+    }
+    
+    @keyframes scanLine {
+      0% {
+        top: 0;
+      }
+      50% {
+        top: 100%;
+      }
+      100% {
+        top: 0;
+      }
+    }
+    
+    .close-scan-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 页面头部 -->
+  <div class="page-header">
+    <div class="page-title">运输联单</div>
+    <div class="action-buttons">
+      <div class="share-dots">
+        <div class="share-dot"></div>
+        <div class="share-dot middle"></div>
+        <div class="share-dot"></div>
+      </div>
+      <div class="home-btn">
+        <div class="home-btn-inner"></div>
+        <div class="home-btn-outer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- 筛选标签栏 -->
+    <div class="filter-bar">
+      <div class="filter-tab active" data-status="waiting">等待运输</div>
+      <div class="filter-tab" data-status="transporting">运输中</div>
+      <div class="filter-tab" data-status="completed">已完成</div>
+    </div>
+    
+    <!-- 运输统计卡片 -->
+    <div class="stats-card">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">215.5</div>
+          <div class="stat-label">本年累计运输量(吨)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">42</div>
+          <div class="stat-label">本年运输次数</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 联单列表 -->
+    <div class="order-list">
+      <!-- 等待运输 -->
+      <div class="order-item" data-status="waiting">
+        <div class="order-header">
+          <div class="order-number">联单号: W20230501001</div>
+          <div class="order-status waiting">等待运输</div>
+        </div>
+        <div class="order-body">
+          <div class="company-name">江阴市XX电镀有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">混合废水W1_W2</span>
+            <span class="waste-amount">5吨</span>
+          </div>
+          <div class="transport-time">预约时间: 2023-05-03 14:00</div>
+        </div>
+        <div class="order-footer">
+          <button class="start-transport-btn">开始运输</button>
+          <button class="scan-qr-btn">扫码</button>
+          <button class="order-detail-btn">查看详情</button>
+        </div>
+      </div>
+      
+      <div class="order-item" data-status="waiting">
+        <div class="order-header">
+          <div class="order-number">联单号: W20230429003</div>
+          <div class="order-status waiting">等待运输</div>
+        </div>
+        <div class="order-body">
+          <div class="company-name">无锡市YY金属制品有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">含铬废水</span>
+            <span class="waste-amount">2.5吨</span>
+          </div>
+          <div class="transport-time">预约时间: 2023-05-04 10:00</div>
+        </div>
+        <div class="order-footer">
+          <button class="start-transport-btn">开始运输</button>
+          <button class="scan-qr-btn">扫码</button>
+          <button class="order-detail-btn">查看详情</button>
+        </div>
+      </div>
+      
+      <!-- 运输中 -->
+      <div class="order-item" data-status="transporting" style="display: none;">
+        <div class="order-header">
+          <div class="order-number">联单号: W20230428002</div>
+          <div class="order-status transporting">运输中</div>
+        </div>
+        <div class="order-body">
+          <div class="company-name">江阴市XX电镀有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">脱脂废水</span>
+            <span class="waste-amount">3吨</span>
+          </div>
+          <div class="transport-time">开始时间: 2023-04-28 09:30</div>
+        </div>
+        <div class="order-footer">
+          <button class="arrive-btn">确认到达</button>
+          <button class="order-detail-btn">查看详情</button>
+        </div>
+      </div>
+      
+      <!-- 已完成 -->
+      <div class="order-item" data-status="completed" style="display: none;">
+        <div class="order-header">
+          <div class="order-number">联单号: W20230415003</div>
+          <div class="order-status completed">已完成</div>
+        </div>
+        <div class="order-body">
+          <div class="company-name">江阴市XX电镀有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">含氰废水</span>
+            <span class="waste-amount">2吨</span>
+          </div>
+          <div class="transport-time">完成时间: 2023-04-15 16:45</div>
+        </div>
+        <div class="order-footer">
+          <button class="order-detail-btn">查看详情</button>
+        </div>
+      </div>
+      
+      <div class="order-item" data-status="completed" style="display: none;">
+        <div class="order-header">
+          <div class="order-number">联单号: W20230410004</div>
+          <div class="order-status completed">已完成</div>
+        </div>
+        <div class="order-body">
+          <div class="company-name">无锡市YY金属制品有限公司</div>
+          <div class="waste-info">
+            <span class="waste-type">酸洗废水</span>
+            <span class="waste-amount">4吨</span>
+          </div>
+          <div class="transport-time">完成时间: 2023-04-10 14:20</div>
+        </div>
+        <div class="order-footer">
+          <button class="order-detail-btn">查看详情</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 扫描按钮 -->
+  <div class="scan-fab" id="scan-btn">
+    <i class="fas fa-qrcode"></i>
+  </div>
+  
+  <!-- 扫描模态框 -->
+  <div class="scan-modal" id="scan-modal">
+    <div class="scan-box">
+      <div class="scan-frame">
+        <div class="scan-corners"><span></span></div>
+        <div class="scan-line"></div>
+      </div>
+    </div>
+    <div class="close-scan-btn" id="close-scan-btn">
+      <i class="fas fa-times"></i>
+    </div>
+  </div>
+  
+  <!-- 底部标签栏 -->
+  <div class="tab-bar">
+    <a href="transfer.html" class="tab-item active">
+      <i class="fas fa-file-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="transport-history.html" class="tab-item">
+      <i class="fas fa-history"></i>
+      <span>历史</span>
+    </a>
+    <a href="profile.html" class="tab-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // 检查用户角色，确保是运输单位
+      const userRole = localStorage.getItem('userRole') || 'transporter';
+      if (userRole !== 'transporter') {
+        localStorage.setItem('userRole', 'transporter');
+      }
+      
+      // 筛选标签切换
+      const filterTabs = document.querySelectorAll('.filter-tab');
+      if (filterTabs) {
+        filterTabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+            // 移除所有激活状态
+            filterTabs.forEach(t => t.classList.remove('active'));
+            // 添加当前激活状态
+            this.classList.add('active');
+            
+            // 过滤订单
+            const status = this.getAttribute('data-status');
+            filterOrders(status);
+          });
+        });
+      }
+      
+      // 筛选订单
+      function filterOrders(status) {
+        const orderItems = document.querySelectorAll('.order-item');
+        
+        orderItems.forEach(item => {
+          if (item.getAttribute('data-status') === status) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+      
+      // 开始运输按钮点击事件
+      const startButtons = document.querySelectorAll('.start-transport-btn');
+      if (startButtons.length > 0) {
+        startButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            const orderItem = this.closest('.order-item');
+            const orderStatus = orderItem.querySelector('.order-status');
+            const orderNumber = orderItem.querySelector('.order-number').textContent.replace('联单号: ', '');
+            
+            // 更改状态
+            orderStatus.textContent = '运输中';
+            orderStatus.className = 'order-status transporting';
+            
+            // 更改数据状态
+            orderItem.setAttribute('data-status', 'transporting');
+            
+            // 获取当前时间
+            const now = new Date();
+            const timeString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
+            // 更改运输时间显示
+            const transportTime = orderItem.querySelector('.transport-time');
+            transportTime.textContent = `启运时间: ${timeString}`;
+            
+            // 更改按钮
+            const orderFooter = orderItem.querySelector('.order-footer');
+            orderFooter.innerHTML = `
+              <button class="confirm-arrival-btn">确认到达</button>
+              <button class="order-detail-btn">查看详情</button>
+            `;
+            
+            // 重新绑定确认到达按钮事件
+            const newConfirmBtn = orderFooter.querySelector('.confirm-arrival-btn');
+            newConfirmBtn.addEventListener('click', function() {
+              confirmArrival(this);
+            });
+            
+            // 重新绑定详情按钮事件
+            const newDetailBtn = orderFooter.querySelector('.order-detail-btn');
+            newDetailBtn.addEventListener('click', function() {
+              window.location.href = 'transfer-detail.html?order=' + orderNumber + '&status=transporting';
+            });
+            
+            // 更新过滤器显示
+            filterOrders('transporting');
+            
+            // 更新激活状态
+            filterTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.filter-tab[data-status="transporting"]').classList.add('active');
+            
+            alert('已开始运输！启运时间已记录');
+          });
+        });
+      }
+      
+      // 确认到达按钮点击事件
+      function confirmArrival(button) {
+        const orderItem = button.closest('.order-item');
+        const orderStatus = orderItem.querySelector('.order-status');
+        const orderNumber = orderItem.querySelector('.order-number').textContent.replace('联单号: ', '');
+        
+        // 更改状态
+        orderStatus.textContent = '已完成';
+        orderStatus.className = 'order-status completed';
+        
+        // 更改数据状态
+        orderItem.setAttribute('data-status', 'completed');
+        
+        // 获取当前时间
+        const now = new Date();
+        const timeString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        
+        // 添加到达时间
+        const transportTime = orderItem.querySelector('.transport-time');
+        const arrivalTime = document.createElement('div');
+        arrivalTime.className = 'arrival-time';
+        arrivalTime.textContent = `到达时间: ${timeString}`;
+        transportTime.parentNode.insertBefore(arrivalTime, transportTime.nextSibling);
+        
+        // 更改按钮
+        const orderFooter = orderItem.querySelector('.order-footer');
+        orderFooter.innerHTML = `
+          <button class="order-detail-btn">查看详情</button>
+        `;
+        
+        // 重新绑定详情按钮事件
+        const newDetailBtn = orderFooter.querySelector('.order-detail-btn');
+        newDetailBtn.addEventListener('click', function() {
+          window.location.href = 'transfer-detail.html?order=' + orderNumber + '&status=completed';
+        });
+        
+        // 更新过滤器显示
+        filterOrders('completed');
+        
+        // 更新激活状态
+        filterTabs.forEach(t => t.classList.remove('active'));
+        document.querySelector('.filter-tab[data-status="completed"]').classList.add('active');
+        
+        alert('已确认到达！已记录第一次称重数据');
+      }
+      
+      const confirmButtons = document.querySelectorAll('.confirm-arrival-btn');
+      if (confirmButtons.length > 0) {
+        confirmButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            confirmArrival(this);
+          });
+        });
+      }
+      
+      // 订单详情按钮点击事件
+      const detailButtons = document.querySelectorAll('.order-detail-btn');
+      detailButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const orderItem = this.closest('.order-item');
+          const orderNumber = orderItem.querySelector('.order-number').textContent.replace('联单号: ', '');
+          const status = orderItem.getAttribute('data-status');
+          
+          // 跳转到详情页
+          window.location.href = 'transfer-detail.html?order=' + orderNumber + '&status=' + status;
+        });
+      });
+      
+      // 扫码按钮点击事件
+      const scanButtons = document.querySelectorAll('.scan-qr-btn');
+      scanButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openScanModal();
+        });
+      });
+      
+      // 浮动扫码按钮
+      const scanBtn = document.getElementById('scan-btn');
+      if (scanBtn) {
+        scanBtn.addEventListener('click', openScanModal);
+      }
+      
+      // 关闭扫码模态框
+      const closeScanBtn = document.getElementById('close-scan-btn');
+      const scanModal = document.getElementById('scan-modal');
+      
+      if (closeScanBtn && scanModal) {
+        closeScanBtn.addEventListener('click', function() {
+          scanModal.classList.remove('show');
+        });
+        
+        // 点击模态框外部关闭
+        scanModal.addEventListener('click', function(e) {
+          if (e.target === scanModal) {
+            scanModal.classList.remove('show');
+          }
+        });
+      }
+      
+      // 打开扫码模态框
+      function openScanModal() {
+        if (scanModal) {
+          scanModal.classList.add('show');
+          
+          // 模拟扫描成功，1.5秒后关闭并显示结果
+          setTimeout(function() {
+            scanModal.classList.remove('show');
+            alert('二维码扫描成功！');
+          }, 1500);
+        }
+      }
+      
+      // 初始调用，显示等待运输的订单
+      filterOrders('waiting');
+    });
+  </script>
+</body>
+</html> 

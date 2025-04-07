@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>首页 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    /* 公司面板样式 */
+    .company-panel {
+      margin-bottom: 16px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      background: white;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .company-header {
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #f8f9fa, #edf2f7);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .company-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .company-title i {
+      color: #3182ce;
+      font-size: 14px;
+    }
+    
+    .company-body {
+      padding: 16px;
+    }
+    
+    /* 废水类型选项卡 */
+    .waste-tabs {
+      display: flex;
+      background-color: #f2f2f7;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox */
+    }
+    
+    .waste-tabs::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Edge */
+    }
+    
+    .waste-tab {
+      padding: 10px 16px;
+      font-size: 14px;
+      color: #718096;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .waste-tab.active {
+      color: #3182ce;
+      font-weight: 500;
+    }
+    
+    .waste-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 16px;
+      right: 16px;
+      height: 3px;
+      background-color: #3182ce;
+      border-radius: 3px 3px 0 0;
+    }
+    
+    /* 数据统计卡片 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(to bottom right, white, #fafbff);
+      padding: 14px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .stat-card:active {
+      transform: scale(0.98);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: #718096;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+    
+    .stat-progress {
+      margin-top: 8px;
+    }
+    
+    .progress {
+      height: 6px;
+      background-color: #edf2f7;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(to right, #3182ce, #63b3ed);
+      border-radius: 3px;
+    }
+    
+    /* 切换开关样式 */
+    .toggle-icon {
+      transition: transform 0.3s ease;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a0aec0;
+    }
+    
+    .collapsed .toggle-icon {
+      transform: rotate(-90deg);
+    }
+    
+    /* 最近联单样式 */
+    .recent-orders {
+      margin-top: 24px;
+      margin-bottom: 100px;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .view-all {
+      font-size: 14px;
+      color: #3182ce;
+      font-weight: 500;
+    }
+    
+    /* 空状态样式 */
+    .empty-state {
+      padding: 32px 16px;
+      text-align: center;
+      color: #a0aec0;
+    }
+    
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: #cbd5e0;
+    }
+    
+    .empty-text {
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    
+    /* 添加按钮 */
+    .fab-button {
+      position: fixed;
+      right: 24px;
+      bottom: 80px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #3182ce, #4299e1);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+      text-decoration: none;
+      z-index: 20;
+    }
+    
+    .fab-button:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 8px rgba(66, 153, 225, 0.2);
+    }
+    
+    /* 公告样式 */
+    .notice-section {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .notice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .notice-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+    }
+    
+    .notice-title i {
+      color: #e53e3e;
+      margin-right: 8px;
+    }
+    
+    .notice-more {
+      color: #718096;
+      font-size: 14px;
+    }
+    
+    .notice-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .notice-item:last-child {
+      border-bottom: none;
+    }
+    
+    .notice-item-title {
+      color: #2d3748;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .notice-item-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    /* 头部按钮样式 */
+    .action-buttons {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .left-buttons {
+      left: 16px;
+      right: auto;
+    }
+
+    .share-dots {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 24px;
+      margin-right: 10px;
+    }
+
+    .share-dot {
+      width: 4px;
+      height: 4px;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    .share-dot.middle {
+      width: 6px;
+      height: 6px;
+    }
+
+    .home-btn {
+      position: relative;
+      width: 24px;
+      height: 24px;
+    }
+
+    .home-btn-outer {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .home-btn-inner {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #000;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS状态栏 -->
+  <div class="ios-status-bar">
+    <div class="status-bar-time" id="status-time">9:41</div>
+    <div class="status-bar-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  
+  <!-- 页面头部 -->
+  <div class="page-header">
+    <div class="page-title">首页</div>
+    <div class="action-buttons">
+      <div class="share-dots">
+        <div class="share-dot"></div>
+        <div class="share-dot middle"></div>
+        <div class="share-dot"></div>
+      </div>
+      <div class="home-btn">
+        <div class="home-btn-inner"></div>
+        <div class="home-btn-outer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- 公司LOGO框 - 轮播图 -->
+    <div class="company-logo-box">
+      <div class="company-slider" id="company-slider">
+        <div class="slider-item">
+          <img src="assets/slide1.jpg" alt="奕水盈公司" class="company-logo">
+        </div>
+        <div class="slider-item">
+          <img src="assets/slide2.jpg" alt="水处理设施" class="company-logo">
+        </div>
+        <div class="slider-item">
+          <img src="assets/slide3.jpg" alt="环保技术" class="company-logo">
+        </div>
+        <div class="slider-item">
+          <img src="assets/slide4.jpg" alt="处理工艺" class="company-logo">
+        </div>
+        <div class="slider-item">
+          <img src="assets/slide5.jpg" alt="企业风貌" class="company-logo">
+        </div>
+      </div>
+      <div class="slider-indicators" id="slider-indicators">
+        <div class="indicator active"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+      </div>
+    </div>
+    
+    <!-- 公司面板 -->
+    <div class="company-panel">
+      <div class="company-header" id="company-header">
+        <div class="company-title">
+          <i class="fas fa-building"></i>
+          <span id="company-name">江苏XX环保科技有限公司</span>
+        </div>
+        <i class="fas fa-chevron-down toggle-icon"></i>
+      </div>
+      <div class="company-body" id="company-body">
+        <!-- 废水类型选项卡 -->
+        <div class="waste-tabs">
+          <div class="waste-tab active" data-tab="mixed">混合废水W1_W2</div>
+          <div class="waste-tab" data-tab="degreasing">脱脂废水</div>
+          <div class="waste-tab" data-tab="cyanide">含氰废水</div>
+          <div class="waste-tab" data-tab="acid">酸洗废水</div>
+          <div class="waste-tab" data-tab="chrome">含铬废水</div>
+        </div>
+        
+        <!-- 废水数据统计 - 第一行：3个 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">当年累计产废量</div>
+            <div class="stat-value">1285.50 吨</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">实际转移量</div>
+            <div class="stat-value">1050.25 吨</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">当前剩余存储量</div>
+            <div class="stat-value">235.25 吨</div>
+            <div class="stat-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 45%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 废水数据统计 - 第二行：3个 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">预估年申报量</div>
+            <div class="stat-value">1800.00 吨</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">合同年签约量</div>
+            <div class="stat-value">2000.00 吨</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">环评年申报量</div>
+            <div class="stat-value">1950.00 吨</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 收处单位视图 - 用户角色为receiver时显示 -->
+    <div class="receiver-view" id="receiver-view" style="display: none;">
+      <!-- 公司A信息面板 -->
+      <div class="company-panel">
+        <div class="company-header" id="companyA-header">
+          <div class="company-title">
+            <i class="fas fa-building"></i>
+            <span>江阴市A公司</span>
+          </div>
+          <i class="fas fa-chevron-down toggle-icon"></i>
+        </div>
+        <div class="company-body" id="companyA-body">
+          <!-- 废水类型选项卡 -->
+          <div class="waste-tabs">
+            <div class="waste-tab active" data-tab="mixedA">混合废水W1_W2</div>
+            <div class="waste-tab" data-tab="degreasingA">脱脂废水</div>
+            <div class="waste-tab" data-tab="cyanideA">含氰废水</div>
+          </div>
+          
+          <!-- 废水数据统计 - 第一行：3个 -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">当年累计产废量</div>
+              <div class="stat-value">985.50 吨</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">实际转移量</div>
+              <div class="stat-value">850.25 吨</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">当前剩余存储量</div>
+              <div class="stat-value">135.25 吨</div>
+              <div class="stat-progress">
+                <div class="progress">
+                  <div class="progress-bar" style="width: 40%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 废水数据统计 - 第二行：3个 -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">预估年申报量</div>
+              <div class="stat-value">1600.00 吨</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">合同年签约量</div>
+              <div class="stat-value">1800.00 吨</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">环评年申报量</div>
+              <div class="stat-value">1750.00 吨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 公司B信息面板 -->
+      <div class="company-panel">
+        <div class="company-header" id="companyB-header">
+          <div class="company-title">
+            <i class="fas fa-building"></i>
+            <span>江阴市B公司</span>
+          </div>
+          <i class="fas fa-chevron-down toggle-icon"></i>
+        </div>
+        <div class="company-body" id="companyB-body">
+          <!-- 废水类型选项卡 -->
+          <div class="waste-tabs">
+            <div class="waste-tab active" data-tab="mixedB">混合废水W1_W2</div>
+            <div class="waste-tab" data-tab="acidB">酸洗废水</div>
+            <div class="waste-tab" data-tab="chromeB">含铬废水</div>
+          </div>
+          
+          <!-- 废水数据统计 - 第一行：3个 -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">当年累计产废量</div>
+              <div class="stat-value">725.80 吨</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">实际转移量</div>
+              <div class="stat-value">650.40 吨</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">当前剩余存储量</div>
+              <div class="stat-value">75.40 吨</div>
+              <div class="stat-progress">
+                <div class="progress">
+                  <div class="progress-bar" style="width: 32%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 废水数据统计 - 第二行：3个 -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">预估年申报量</div>
+              <div class="stat-value">1200.00 吨</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">合同年签约量</div>
+              <div class="stat-value">1400.00 吨</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">环评年申报量</div>
+              <div class="stat-value">1350.00 吨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 公告区域 -->
+    <div class="notice-section">
+      <div class="notice-header">
+        <div class="notice-title">
+          <i class="fas fa-bullhorn"></i>
+          系统公告
+        </div>
+        <div class="notice-more">查看全部</div>
+      </div>
+      <div class="notice-list">
+        <div class="notice-item">
+          <div class="notice-item-title">关于系统升级维护的通知</div>
+          <div class="notice-item-meta">
+            <div class="notice-item-time">2023-05-05</div>
+            <div class="notice-item-tag">系统公告</div>
+          </div>
+        </div>
+        <div class="notice-item">
+          <div class="notice-item-title">工业废水处理新规发布，请各单位注意</div>
+          <div class="notice-item-meta">
+            <div class="notice-item-time">2023-05-03</div>
+            <div class="notice-item-tag">政策通知</div>
+          </div>
+        </div>
+        <div class="notice-item">
+          <div class="notice-item-title">关于加强夏季高温天气废水处理的通知</div>
+          <div class="notice-item-meta">
+            <div class="notice-item-time">2023-05-01</div>
+            <div class="notice-item-tag">操作提示</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 最近联单记录 -->
+    <div class="recent-orders">
+      <div class="section-title">
+        最近联单记录
+        <a href="transfer.html" class="view-all">查看全部</a>
+      </div>
+      
+      <!-- 联单列表 -->
+      <div class="list-item">
+        <div class="list-item-content">
+          <div class="list-item-title">WS20230501001</div>
+          <div class="list-item-subtitle">2023-05-01 | 混合废水W1_W2 | 50.00吨</div>
+        </div>
+        <div class="tag tag-success">已完成</div>
+       </div>
+      
+      <div class="list-item">
+        <div class="list-item-content">
+          <div class="list-item-title">WS20230428002</div>
+          <div class="list-item-subtitle">2023-04-28 | 脱脂废水 | 20.50吨</div>
+        </div>
+        <div class="tag tag-info">运输中</div>
+       </div>
+      
+      <div class="list-item">
+        <div class="list-item-content">
+          <div class="list-item-title">WS20230425003</div>
+          <div class="list-item-subtitle">2023-04-25 | 含氰废水 | 35.75吨</div>
+        </div>
+        <div class="tag tag-warning">已创建</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 底部标签栏 -->
+  <div class="tab-bar">
+    <a href="home.html" class="tab-item active">
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+    <a href="ledger.html" class="tab-item">
+      <i class="fas fa-book"></i>
+      <span>台账</span>
+    </a>
+    <a href="transfer.html" class="tab-item">
+      <i class="fas fa-exchange-alt"></i>
+      <span>联单</span>
+    </a>
+    <a href="profile.html" class="tab-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    // 更新状态栏时间
+    function updateStatusBarTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('status-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    // 初始加载和每分钟更新时间
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 60000);
+    
+    // 轮播图自动切换
+    let currentSlide = 0;
+    const totalSlides = document.querySelectorAll('.slider-item').length;
+    const slider = document.getElementById('company-slider');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    function updateSlider() {
+      slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      // 更新指示器
+      document.querySelectorAll('.indicator').forEach((ind, index) => {
+        if (index === currentSlide) {
+          ind.classList.add('active');
+        } else {
+          ind.classList.remove('active');
+        }
+      });
+    }
+    
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateSlider();
+    }
+    
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      updateSlider();
+    }
+    
+    // 自动切换轮播图
+    setInterval(nextSlide, 4000);
+    
+    // 点击指示器切换轮播图
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        currentSlide = index;
+        updateSlider();
+      });
+    });
+    
+    // 添加触摸滑动功能
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    slider.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+    });
+    
+    slider.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].clientX;
+      handleGesture();
+    });
+    
+    function handleGesture() {
+      if (touchEndX < touchStartX) {
+        nextSlide(); // 向左滑动
+      }
+      if (touchEndX > touchStartX) {
+        prevSlide(); // 向右滑动
+      }
+    }
+    
+    // 初始化页面视图
+    document.addEventListener('DOMContentLoaded', function() {
+      const userRole = localStorage.getItem('userRole') || 'producer';
+      
+      // 隐藏所有公司面板
+      const companyPanel = document.querySelector('.company-panel');
+      const receiverView = document.getElementById('receiver-view');
+      
+      // 默认布局
+      if (companyPanel) companyPanel.style.display = 'block';
+      if (receiverView) receiverView.style.display = 'none';
+      
+      // 处理公司面板折叠展开
+      document.getElementById('company-header').addEventListener('click', function() {
+        const companyBody = document.getElementById('company-body');
+        companyBody.style.display = companyBody.style.display === 'none' ? 'block' : 'none';
+        this.classList.toggle('collapsed');
+      });
+      
+      // 根据用户角色设置页面
+      if (userRole === 'receiver') {
+        // 收处单位视图
+        if (companyPanel) companyPanel.style.display = 'none';
+        if (receiverView) receiverView.style.display = 'block';
+        
+        // 创建处理能力统计卡片
+        const processingCapacityCard = document.createElement('div');
+        processingCapacityCard.className = 'company-panel processing-capacity-card';
+        processingCapacityCard.innerHTML = `
+          <div class="company-header" id="processing-capacity-header">
+            <div class="company-title">
+              <i class="fas fa-chart-line"></i>
+              <span>处理能力统计</span>
+            </div>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+          <div class="company-body" id="processing-capacity-body">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">累计收处总量</div>
+                <div class="stat-value">24,850.75 吨</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">年处理能力</div>
+                <div class="stat-value">34,127.50 吨</div>
+              </div>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">处理能力利用率</div>
+                <div class="stat-value">72.8%</div>
+                <div class="stat-progress">
+                  <div class="progress">
+                    <div class="progress-bar" style="width: 73%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">产废单位总数</div>
+                <div class="stat-value">12 家</div>
+              </div>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">混合废水W1_W2</div>
+                <div class="stat-value">12,580.25 吨</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">脱脂废水</div>
+                <div class="stat-value">5,640.50 吨</div>
+              </div>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">含氰废水</div>
+                <div class="stat-value">3,630.00 吨</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">其他废水</div>
+                <div class="stat-value">3,000.00 吨</div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // 添加处理能力统计卡片到页面
+        if (receiverView) {
+          receiverView.insertBefore(processingCapacityCard, receiverView.firstChild);
+        }
+        
+        // 绑定处理能力面板折叠展开事件
+        const processingCapacityHeader = document.getElementById('processing-capacity-header');
+        if (processingCapacityHeader) {
+          processingCapacityHeader.addEventListener('click', function() {
+            const capacityBody = document.getElementById('processing-capacity-body');
+            capacityBody.style.display = capacityBody.style.display === 'none' ? 'block' : 'none';
+            this.classList.toggle('collapsed');
+          });
+        }
+        
+        // 绑定各产废公司面板折叠展开事件
+        document.getElementById('companyA-header').addEventListener('click', function() {
+          const companyBody = document.getElementById('companyA-body');
+          companyBody.style.display = companyBody.style.display === 'none' ? 'block' : 'none';
+          this.classList.toggle('collapsed');
+        });
+        
+        document.getElementById('companyB-header').addEventListener('click', function() {
+          const companyBody = document.getElementById('companyB-body');
+          companyBody.style.display = companyBody.style.display === 'none' ? 'block' : 'none';
+          this.classList.toggle('collapsed');
+        });
+      } else {
+        // 产废单位视图 - 只显示自己的信息
+        if (companyPanel) companyPanel.style.display = 'block';
+        if (receiverView) receiverView.style.display = 'none';
+        
+        // 设置公司名称
+        document.getElementById('company-name').textContent = '江苏XX环保科技有限公司';
+      }
+    });
+    
+    // 废水类型选项卡切换
+    document.querySelectorAll('.waste-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        // 获取当前选项卡组
+        const tabGroup = this.parentElement;
+        // 移除当前组中所有活动状态
+        tabGroup.querySelectorAll('.waste-tab').forEach(t => t.classList.remove('active'));
+        // 添加当前选项卡的活动状态
+        this.classList.add('active');
+        
+        // 模拟数据加载
+        const wasteType = this.getAttribute('data-tab');
+        if (!wasteType) return; // 如果没有data-tab属性，直接返回
+        
+        // 获取相关卡片，这里需要确定是在哪个公司面板中
+        let parentPanel = this.closest('.company-body');
+        if (!parentPanel) return;
+        
+        const statCards = parentPanel.querySelectorAll('.stat-card');
+        if (statCards.length < 3) return;
+        
+        // 模拟不同类型的数据加载
+        const mockData = {
+          mixed: {
+            yearlyTotal: '1285.50 吨',
+            transferred: '1050.25 吨',
+            current: '235.25 吨',
+            currentPercent: '45%',
+            estimated: '1800.00 吨',
+            contracted: '2000.00 吨',
+            environmentalReport: '1950.00 吨'
+          },
+          degreasing: {
+            yearlyTotal: '865.30 吨',
+            transferred: '790.10 吨',
+            current: '75.20 吨',
+            currentPercent: '30%',
+            estimated: '1200.00 吨',
+            contracted: '1500.00 吨',
+            environmentalReport: '1250.00 吨'
+          },
+          // 添加其他废水类型的模拟数据
+          // ... 其他废水类型
+        };
+        
+        // 如果有对应的模拟数据，更新卡片内容
+        if (mockData[wasteType]) {
+          const data = mockData[wasteType];
+          
+          // 更新统计卡片数据
+          if (statCards[0]) statCards[0].querySelector('.stat-value').textContent = data.yearlyTotal;
+          if (statCards[1]) statCards[1].querySelector('.stat-value').textContent = data.transferred;
+          if (statCards[2]) {
+            statCards[2].querySelector('.stat-value').textContent = data.current;
+            const progressBar = statCards[2].querySelector('.progress-bar');
+            if (progressBar) progressBar.style.width = data.currentPercent;
+          }
+          
+          // 更新其他卡片
+          if (statCards.length > 3) {
+            if (statCards[3]) statCards[3].querySelector('.stat-value').textContent = data.estimated;
+            if (statCards[4]) statCards[4].querySelector('.stat-value').textContent = data.contracted;
+            if (statCards[5]) statCards[5].querySelector('.stat-value').textContent = data.environmentalReport;
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
