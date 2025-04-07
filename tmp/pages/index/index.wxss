@@ -1,0 +1,45 @@
+.container {
+  padding: 20rpx;
+}
+
+.company-info {
+  margin-bottom: 40rpx;
+}
+
+.company-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.waste-type {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.data-item {
+  background: #f8f8f8;
+  padding: 30rpx;
+  border-radius: 10rpx;
+  text-align: center;
+}
+
+.label {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.value {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+} 

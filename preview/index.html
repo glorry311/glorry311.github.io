@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>界面预览 - 奕水盈集中式工业污水管理平台</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8fafc;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #1f2937;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      color: #1f2937;
+      margin: 40px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+      gap: 30px;
+    }
+
+    .preview-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .preview-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .preview-title i {
+      margin-right: 10px;
+      color: #3b82f6;
+    }
+
+    .preview-description {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .preview-frame {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background-color: #f8fafc;
+    }
+
+    .preview-status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-left: 10px;
+      background-color: #f1f5f9;
+      color: #64748b;
+    }
+
+    .user-role {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-left: 10px;
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>奕水盈集中式工业污水管理平台 - 界面预览</h1>
+    
+    <!-- 公共界面 -->
+    <h2>公共界面</h2>
+    <div class="preview-grid">
+      <!-- 登录界面 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-sign-in-alt"></i>
+          登录界面
+        </div>
+        <div class="preview-description">
+          用户登录界面，支持产废单位、运输单位、收处单位登录
+        </div>
+        <iframe src="../login.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 首页 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-home"></i>
+          首页
+        </div>
+        <div class="preview-description">
+          平台主页面，展示重要信息和快捷入口
+        </div>
+        <iframe src="../home.html" class="preview-frame"></iframe>
+      </div>
+    </div>
+
+    <!-- 产废单位界面 -->
+    <h2>产废单位界面</h2>
+    <div class="preview-grid">
+      <!-- 台账列表 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-book"></i>
+          台账
+          <span class="preview-status">列表</span>
+          <span class="user-role">产废单位</span>
+        </div>
+        <div class="preview-description">
+          产废单位的废水记录管理界面
+        </div>
+        <iframe src="../ledger.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 台账详情 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-book"></i>
+          台账
+          <span class="preview-status">详情</span>
+          <span class="user-role">产废单位</span>
+        </div>
+        <div class="preview-description">
+          废水记录详细信息界面
+        </div>
+        <iframe src="../ledger-detail.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 联单列表 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-alt"></i>
+          联单
+          <span class="preview-status">列表</span>
+          <span class="user-role">产废单位</span>
+        </div>
+        <div class="preview-description">
+          废水转移联单管理界面
+        </div>
+        <iframe src="../transfer.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 联单详情 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-invoice"></i>
+          联单
+          <span class="preview-status">详情</span>
+          <span class="user-role">产废单位</span>
+        </div>
+        <div class="preview-description">
+          联单详细信息查看界面
+        </div>
+        <iframe src="../transfer-detail.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 联单申报 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-upload"></i>
+          联单
+          <span class="preview-status">申报</span>
+          <span class="user-role">产废单位</span>
+        </div>
+        <div class="preview-description">
+          联单申报界面
+        </div>
+        <iframe src="../create-transfer.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 合同列表 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-contract"></i>
+          合同
+          <span class="preview-status">列表</span>
+          <span class="user-role">产废单位</span>
+        </div>
+        <div class="preview-description">
+          合同管理界面
+        </div>
+        <iframe src="../contracts.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 合同详情 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-signature"></i>
+          合同
+          <span class="preview-status">详情</span>
+          <span class="user-role">产废单位</span>
+        </div>
+        <div class="preview-description">
+          合同详细信息查看界面
+        </div>
+        <iframe src="../contract-detail.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 我的 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-user"></i>
+          我的
+          <span class="user-role">产废单位</span>
+        </div>
+        <div class="preview-description">
+          个人中心界面
+        </div>
+        <iframe src="../profile.html" class="preview-frame"></iframe>
+      </div>
+    </div>
+
+    <!-- 运输单位界面 -->
+    <h2>运输单位界面</h2>
+    <div class="preview-grid">
+      <!-- 运输单位联单列表 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-alt"></i>
+          联单
+          <span class="preview-status">列表</span>
+          <span class="user-role">运输单位</span>
+        </div>
+        <div class="preview-description">
+          运输单位的联单管理界面
+        </div>
+        <iframe src="../transporter.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 运输单位联单详情 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-invoice"></i>
+          联单
+          <span class="preview-status">详情</span>
+          <span class="user-role">运输单位</span>
+        </div>
+        <div class="preview-description">
+          运输单位联单详细信息查看界面
+        </div>
+        <iframe src="../transfer-detail.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 运输历史 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-history"></i>
+          运输历史
+          <span class="user-role">运输单位</span>
+        </div>
+        <div class="preview-description">
+          运输历史记录查看界面
+        </div>
+        <iframe src="../transport-history.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 运输单位我的 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-user"></i>
+          我的
+          <span class="user-role">运输单位</span>
+        </div>
+        <div class="preview-description">
+          运输单位个人中心界面
+        </div>
+        <iframe src="../profile.html" class="preview-frame"></iframe>
+      </div>
+    </div>
+
+    <!-- 收处单位界面 -->
+    <h2>收处单位界面</h2>
+    <div class="preview-grid">
+      <!-- 收处单位联单列表 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-alt"></i>
+          联单
+          <span class="preview-status">列表</span>
+          <span class="user-role">收处单位</span>
+        </div>
+        <div class="preview-description">
+          收处单位的联单管理界面
+        </div>
+        <iframe src="../transfer.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 收处单位联单详情 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-file-invoice"></i>
+          联单
+          <span class="preview-status">详情</span>
+          <span class="user-role">收处单位</span>
+        </div>
+        <div class="preview-description">
+          收处单位联单详细信息查看界面
+        </div>
+        <iframe src="../transfer-detail.html" class="preview-frame"></iframe>
+      </div>
+
+      <!-- 收处单位我的 -->
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-user"></i>
+          我的
+          <span class="user-role">收处单位</span>
+        </div>
+        <div class="preview-description">
+          收处单位个人中心界面
+        </div>
+        <iframe src="../profile.html" class="preview-frame"></iframe>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

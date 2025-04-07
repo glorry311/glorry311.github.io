@@ -1,0 +1,33 @@
+<view class="container">
+  <view class="company-info">
+    <view class="company-name">{{companyName}}</view>
+    <view class="waste-type">{{wasteType}}</view>
+  </view>
+  
+  <view class="data-grid">
+    <view class="data-item">
+      <text class="label">当年累计产废量</text>
+      <text class="value">{{totalWaste}}</text>
+    </view>
+    <view class="data-item">
+      <text class="label">实际转移量</text>
+      <text class="value">{{actualTransfer}}</text>
+    </view>
+    <view class="data-item">
+      <text class="label">当前剩余存储量</text>
+      <text class="value">{{remainingStorage}}</text>
+    </view>
+    <view class="data-item">
+      <text class="label">预估年申报量</text>
+      <text class="value">{{estimatedAnnual}}</text>
+    </view>
+    <view class="data-item">
+      <text class="label">合同年签约量</text>
+      <text class="value">{{contractAnnual}}</text>
+    </view>
+    <view class="data-item">
+      <text class="label">环评年申报量</text>
+      <text class="value">{{eiaAnnual}}</text>
+    </view>
+  </view>
+</view> 
